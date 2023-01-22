@@ -1,0 +1,62 @@
+version: '3.1'
+
+services:
+  symfony:
+    image: docker.io/bitnami/symfony:6.2
+    restart: always
+    ports:
+      - '81:8000'
+    environment:
+      # ALLOW_EMPTY_PASSWORD is recommended only for development.
+      - ALLOW_EMPTY_PASSWORD=yes
+      - SYMFONY_DATABASE_HOST=postgresql
+      - SYMFONY_DATABASE_PORT_NUMBER=5432
+      - SYMFONY_DATABASE_USER=admin
+      - SYMFONY_DATABASE_NAME=app
+    volumes:
+      - './:/app'
+    depends_on:
+      - postgres
+  php:
+    container_name: php
+    image: apache-pqsql
+    restart: always
+    ports:
+      [ "1000:80" ]
+    volumes:
+      [./:/var/www/html/]
+    depends_on:
+      - postgres
+    networks:
+      - backroom-nt
+
+  postgres:
+    container_name: postgresql
+    image: postgres
+    restart: always
+    ports:
+      [ "1010:5432" ]
+    environment:
+      POSTGRES_DB: app
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: example
+    volumes:
+        [ ./pqsql:/var/www/pqsql/ ]
+    networks:
+      - backroom-nt
+
+  adminer:
+    image: adminer
+    container_name: admin
+    restart: always
+    ports:
+      [ "8080:8080" ]
+    networks:
+      - backroom-nt
+networks:
+  backroom-nt:
+    driver: bridge
+        
+        
+    
+    
