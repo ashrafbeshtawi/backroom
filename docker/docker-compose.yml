@@ -6,13 +6,6 @@ services:
     restart: always
     ports:
       - '81:8000'
-    environment:
-      # ALLOW_EMPTY_PASSWORD is recommended only for development.
-      - ALLOW_EMPTY_PASSWORD=yes
-      - SYMFONY_DATABASE_HOST=postgresql
-      - SYMFONY_DATABASE_PORT_NUMBER=5432
-      - SYMFONY_DATABASE_USER=admin
-      - SYMFONY_DATABASE_NAME=app
     volumes:
       - './:/app'
     depends_on:
