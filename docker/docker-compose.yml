@@ -56,7 +56,7 @@ services:
 networks:
   backroom-nt:
     driver: bridge
-        
-        
-    
-    
+env_file:
+  - ../.env
+
+
