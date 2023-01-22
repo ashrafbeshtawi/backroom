@@ -36,10 +36,13 @@ services:
     container_name: nuxtjs
     image: nuxtjs
     restart: always
+    environment:
+      - NUXT_HOST=0.0.0.0
+      - NUXT_PORT=3000
     ports:
-      [ "1234:3000" ]
+      [ "3000:3000" ]
     volumes:
-        [ ./frontend:/app/ ]
+        [ ./frontend:/frontend/ ]
     networks:
       - backroom-nt
 networks:

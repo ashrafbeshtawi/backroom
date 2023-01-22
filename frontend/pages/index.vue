@@ -21,7 +21,7 @@
             </a>.
           </p>
           <p>
-            If you have questions, plddvsvvsdvease join the official <a
+            If you test   ffdfvdfs <a
               href="https://chat.vuetifyjs.com/"
               target="_blank"
               rel="noopener noreferrer"

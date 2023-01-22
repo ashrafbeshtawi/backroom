@@ -1,17 +1,17 @@
-FROM node:14-alpine
+FROM node:11.13.0-alpine
 
 # Create app directory
-RUN mkdir -p /app
-WORKDIR /app
+RUN mkdir -p /frontend
+WORKDIR /frontend
 
 # update and install dependency
 RUN apk update && apk upgrade
 RUN apk add git
 
 # Install dependencies
-COPY . /app/
+COPY . /frontend/
 RUN npm install
 RUN npm run build
 
 # Build the Nuxt.js application
-CMD [ "npm", "start" ]
+CMD [ "npm", "run", "dev" ]
