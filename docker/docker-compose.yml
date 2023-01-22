@@ -10,19 +10,6 @@ services:
       - './:/app'
     depends_on:
       - postgres
-  php:
-    container_name: php
-    image: apache-pqsql
-    restart: always
-    ports:
-      [ "1000:80" ]
-    volumes:
-      [./:/var/www/html/]
-    depends_on:
-      - postgres
-    networks:
-      - backroom-nt
-
   postgres:
     container_name: postgresql
     image: postgres
@@ -35,15 +22,6 @@ services:
       POSTGRES_PASSWORD: example
     volumes:
         [ ./pqsql:/var/www/pqsql/ ]
-    networks:
-      - backroom-nt
-
-  adminer:
-    image: adminer
-    container_name: admin
-    restart: always
-    ports:
-      [ "8080:8080" ]
     networks:
       - backroom-nt
 networks:
