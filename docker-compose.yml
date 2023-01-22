@@ -16,6 +16,8 @@ services:
       - './:/app'
     depends_on:
       - postgres
+    networks:
+      - backroom-nt
   postgres:
     container_name: postgres
     image: postgres
@@ -28,6 +30,16 @@ services:
       POSTGRES_PASSWORD: example
     volumes:
         [ ./pqsql:/var/www/pqsql/ ]
+    networks:
+      - backroom-nt
+  nuxtjs:
+    container_name: nuxtjs
+    image: nuxtjs
+    restart: always
+    ports:
+      [ "1234:3000" ]
+    volumes:
+        [ ./frontend:/app/ ]
     networks:
       - backroom-nt
 networks:
