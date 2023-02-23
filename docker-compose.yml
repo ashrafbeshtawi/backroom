@@ -2,20 +2,15 @@ version: '3.1'
 
 services:
   symfony:
-    image: docker.io/bitnami/symfony:6.2
+    container_name: symfony
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
     restart: always
     ports:
-      - '81:8000'
-    environment:
-      - ALLOW_EMPTY_PASSWORD=${SYMFONY_ALLOW_EMPTY_PASSWORD}
-      - SYMFONY_DATABASE_HOST=${DATABASE_HOST}
-      - SYMFONY_DATABASE_PORT_NUMBER=${DATABASE_PORT_NUMBER}
-      - SYMFONY_DATABASE_USER=${DATABASE_USER}
-      - SYMFONY_DATABASE_NAME=${DATABASE_NAME}
+      - "8080:80"
     volumes:
-      - './:/app'
-    depends_on:
-      - postgres
+      - ./backend:/var/www/html/
     networks:
       - backroom-nt
   postgres:
@@ -34,7 +29,9 @@ services:
       - backroom-nt
   nuxtjs:
     container_name: nuxtjs
-    image: nuxtjs
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
     restart: always
     environment:
       - NUXT_HOST=0.0.0.0

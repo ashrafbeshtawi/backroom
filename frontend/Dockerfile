@@ -11,7 +11,6 @@ RUN apk add git
 # Install dependencies
 COPY . /frontend/
 RUN npm install
-RUN npm run build
 
 # Build the Nuxt.js application
 CMD [ "npm", "run", "dev" ]
