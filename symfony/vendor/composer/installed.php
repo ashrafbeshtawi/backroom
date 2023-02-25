@@ -1,15 +1,24 @@
 <?php return array(
     'root' => array(
-        'pretty_version' => 'v6.2.99',
-        'version' => '6.2.99.0',
+        'pretty_version' => 'dev-main',
+        'version' => 'dev-main',
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
-        'reference' => NULL,
-        'name' => 'symfony/skeleton',
+        'reference' => 'ca0baec9947779c2419efbf4479940d1a45da139',
+        'name' => '__root__',
         'dev' => true,
     ),
     'versions' => array(
+        '__root__' => array(
+            'pretty_version' => 'dev-main',
+            'version' => 'dev-main',
+            'type' => 'project',
+            'install_path' => __DIR__ . '/../../',
+            'aliases' => array(),
+            'reference' => 'ca0baec9947779c2419efbf4479940d1a45da139',
+            'dev_requirement' => false,
+        ),
         'psr/cache' => array(
             'pretty_version' => '3.0.0',
             'version' => '3.0.0.0',
@@ -75,6 +84,15 @@
             'provided' => array(
                 0 => '1.0|2.0|3.0',
             ),
+        ),
+        'symfony/apache-pack' => array(
+            'pretty_version' => 'v1.0.1',
+            'version' => '1.0.1.0',
+            'type' => 'symfony-pack',
+            'install_path' => __DIR__ . '/../symfony/apache-pack',
+            'aliases' => array(),
+            'reference' => '3aa5818d73ad2551281fc58a75afd9ca82622e6c',
+            'dev_requirement' => false,
         ),
         'symfony/cache' => array(
             'pretty_version' => 'v6.2.5',
@@ -333,15 +351,6 @@
             'provided' => array(
                 0 => '1.1|2.0|3.0',
             ),
-        ),
-        'symfony/skeleton' => array(
-            'pretty_version' => 'v6.2.99',
-            'version' => '6.2.99.0',
-            'type' => 'project',
-            'install_path' => __DIR__ . '/../../',
-            'aliases' => array(),
-            'reference' => NULL,
-            'dev_requirement' => false,
         ),
         'symfony/string' => array(
             'pretty_version' => 'v6.2.5',
