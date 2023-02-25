@@ -1,12 +1,12 @@
 
 ###> symfony/framework-bundle ###
-backend/.env.local
-backend/.env.local.php
-backend/.env.*.local
-backend/config/secrets/prod/prod.decrypt.private.php
-backend/public/bundles/
-backend/var/
-backend/vendor/
+symfony/.env.local
+symfony/.env.local.php
+symfony/.env.*.local
+symfony/config/secrets/prod/prod.decrypt.private.php
+symfony/public/bundles/
+symfony/var/
+symfony/vendor/
 ###< symfony/framework-bundle ###
 
 # Created by .ignore support plugin (hsz.mobi)

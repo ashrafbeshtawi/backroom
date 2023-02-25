@@ -10,24 +10,24 @@ if (in_array(PHP_SAPI, ['cli', 'phpdbg'], true)) {
 }
 
 require dirname(__DIR__, 3).'/vendor/autoload.php';
-(require __DIR__.'/App_KernelDevDebugContainer.php')->set(\ContainerYb41RRU\App_KernelDevDebugContainer::class, null);
-require __DIR__.'/ContainerYb41RRU/getSession_FactoryService.php';
-require __DIR__.'/ContainerYb41RRU/getServicesResetterService.php';
-require __DIR__.'/ContainerYb41RRU/getSecrets_VaultService.php';
-require __DIR__.'/ContainerYb41RRU/getRouting_LoaderService.php';
-require __DIR__.'/ContainerYb41RRU/getErrorControllerService.php';
-require __DIR__.'/ContainerYb41RRU/getContainer_GetRoutingConditionServiceService.php';
-require __DIR__.'/ContainerYb41RRU/getContainer_EnvVarProcessorsLocatorService.php';
-require __DIR__.'/ContainerYb41RRU/getContainer_EnvVarProcessorService.php';
-require __DIR__.'/ContainerYb41RRU/getCache_SystemClearerService.php';
-require __DIR__.'/ContainerYb41RRU/getCache_SystemService.php';
-require __DIR__.'/ContainerYb41RRU/getCache_GlobalClearerService.php';
-require __DIR__.'/ContainerYb41RRU/getCache_AppClearerService.php';
-require __DIR__.'/ContainerYb41RRU/getCache_AppService.php';
-require __DIR__.'/ContainerYb41RRU/getArgumentResolver_ServiceService.php';
-require __DIR__.'/ContainerYb41RRU/getTemplateControllerService.php';
-require __DIR__.'/ContainerYb41RRU/getRedirectControllerService.php';
-require __DIR__.'/ContainerYb41RRU/get_ServiceLocator_Y4Zrx_Service.php';
+(require __DIR__.'/App_KernelDevDebugContainer.php')->set(\ContainerXz7o9xe\App_KernelDevDebugContainer::class, null);
+require __DIR__.'/ContainerXz7o9xe/getSession_FactoryService.php';
+require __DIR__.'/ContainerXz7o9xe/getServicesResetterService.php';
+require __DIR__.'/ContainerXz7o9xe/getSecrets_VaultService.php';
+require __DIR__.'/ContainerXz7o9xe/getRouting_LoaderService.php';
+require __DIR__.'/ContainerXz7o9xe/getErrorControllerService.php';
+require __DIR__.'/ContainerXz7o9xe/getContainer_GetRoutingConditionServiceService.php';
+require __DIR__.'/ContainerXz7o9xe/getContainer_EnvVarProcessorsLocatorService.php';
+require __DIR__.'/ContainerXz7o9xe/getContainer_EnvVarProcessorService.php';
+require __DIR__.'/ContainerXz7o9xe/getCache_SystemClearerService.php';
+require __DIR__.'/ContainerXz7o9xe/getCache_SystemService.php';
+require __DIR__.'/ContainerXz7o9xe/getCache_GlobalClearerService.php';
+require __DIR__.'/ContainerXz7o9xe/getCache_AppClearerService.php';
+require __DIR__.'/ContainerXz7o9xe/getCache_AppService.php';
+require __DIR__.'/ContainerXz7o9xe/getArgumentResolver_ServiceService.php';
+require __DIR__.'/ContainerXz7o9xe/getTemplateControllerService.php';
+require __DIR__.'/ContainerXz7o9xe/getRedirectControllerService.php';
+require __DIR__.'/ContainerXz7o9xe/get_ServiceLocator_Y4Zrx_Service.php';
 
 $classes = [];
 $classes[] = 'Symfony\Bundle\FrameworkBundle\FrameworkBundle';
@@ -99,8 +99,3 @@ $classes[] = 'Symfony\Component\HttpKernel\EventListener\SessionListener';
 $classes[] = 'Symfony\Component\HttpKernel\EventListener\ValidateRequestListener';
 
 $preloaded = Preloader::preload($classes);
-
-$classes = [];
-$classes[] = 'Symfony\\Component\\Routing\\Generator\\CompiledUrlGenerator';
-$classes[] = 'Symfony\\Bundle\\FrameworkBundle\\Routing\\RedirectableCompiledUrlMatcher';
-$preloaded = Preloader::preload($classes, $preloaded);
