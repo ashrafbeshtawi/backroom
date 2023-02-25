@@ -4,10 +4,9 @@
 
 ```bash
 # install dependencies
-$ bin/build.sh
-$ dc up
+$ dc up --build
 ```
 
 ## Details
-This app runs symfony & postgresql in the Backend & Nuxtjs as Frontend & SSR
+This app runs symfony & postgresql in the Backend & Nuxtjs as Frontend
 Target is to build an E-commerce App with full docerization
