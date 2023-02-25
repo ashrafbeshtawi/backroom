@@ -4,7 +4,7 @@ services:
   symfony:
     container_name: symfony
     build:
-      context: ./backend
+      context: ./symfony
       dockerfile: Dockerfile
     restart: always
     ports:
