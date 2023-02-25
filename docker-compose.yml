@@ -7,6 +7,7 @@ services:
       context: ./symfony
       dockerfile: Dockerfile
     restart: always
+    depends_on: [postgres]
     ports:
       - "8080:80"
     volumes:
@@ -20,9 +21,10 @@ services:
     ports:
       [ "1010:5432" ]
     environment:
-      POSTGRES_DB: app
-      POSTGRES_USER: admin
-      POSTGRES_PASSWORD: example
+      POSTGRES_DB: ${DATABASE_NAME}
+      POSTGRES_PORT: ${DATABASE_PORT}
+      POSTGRES_USER: ${DATABASE_USER}
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
     volumes:
         [ ./pqsql:/var/www/pqsql/ ]
     networks:
@@ -34,8 +36,8 @@ services:
       dockerfile: Dockerfile
     restart: always
     environment:
-      - NUXT_HOST=0.0.0.0
-      - NUXT_PORT=3000
+      - NUXT_HOST=${FRONTEND_HOST}
+      - NUXT_PORT=${FRONTEND_PORT}
     ports:
       [ "3000:3000" ]
     volumes:
@@ -45,6 +47,14 @@ services:
   liquibase:
    container_name: liquibase
    image: liquibase/liquibase:4.19
+   environment:
+    LIQUIBASE_COMMAND_URL: ${LIQUIBASE_URL}
+    LIQUIBASE_COMMAND_USERNAME: ${DATABASE_USER}
+    LIQUIBASE_COMMAND_PASSWORD: ${DATABASE_PASSWORD}
+    LIQUIBASE_COMMAND_CHANGELOG_FILE: changeLog.xml
+   volumes:
+    - ./liquibase/changeLog/:/liquibase/changelog/
+   command: --defaults-file=/liquibase/changelog/liquibase.properties update
    depends_on: [postgres]
 networks:
   backroom-nt:
