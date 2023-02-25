@@ -15,7 +15,7 @@ services:
       - backroom-nt
   postgres:
     container_name: postgres
-    image: postgres
+    image: postgres:alpine3.17
     restart: always
     ports:
       [ "1010:5432" ]
@@ -42,6 +42,10 @@ services:
         [ ./frontend:/frontend/ ]
     networks:
       - backroom-nt
+  liquibase:
+   container_name: liquibase
+   image: liquibase/liquibase:4.19
+   depends_on: [postgres]
 networks:
   backroom-nt:
     driver: bridge
