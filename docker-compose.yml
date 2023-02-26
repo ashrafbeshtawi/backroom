@@ -56,6 +56,13 @@ services:
     - ./liquibase/changeLog/:/liquibase/changelog/
    command: --defaults-file=/liquibase/changelog/liquibase.properties update
    depends_on: [postgres]
+  flyway:
+    image: flyway/flyway
+    command: -url=jdbc:postgresql://postgresql:5432/app -schemas=public -user=admin -password=password -connectRetries=60 migrate
+    volumes:
+      - .:/flyway/sql
+    depends_on:
+      - postgres
 networks:
   backroom-nt:
     driver: bridge
