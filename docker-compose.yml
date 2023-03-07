@@ -14,6 +14,7 @@ services:
       - ./symfony:/var/www/html/
     networks:
       - backroom-nt
+
   postgres:
     container_name: postgres
     image: postgres:alpine3.17
@@ -27,6 +28,7 @@ services:
       - "1010:5432"
     networks:
       - backroom-nt
+
   nuxtjs:
     container_name: nuxtjs
     build:
@@ -41,21 +43,6 @@ services:
     volumes:
         [ ./frontend:/frontend/ ]
     networks:
-      - backroom-nt
-
-  liquibase:
-   container_name: liquibase
-   image: liquibase/liquibase:4.19
-   environment:
-    LIQUIBASE_COMMAND_URL: ${LIQUIBASE_URL}
-    LIQUIBASE_COMMAND_USERNAME: ${DATABASE_USER}
-    LIQUIBASE_COMMAND_PASSWORD: ${DATABASE_PASSWORD}
-    LIQUIBASE_COMMAND_CHANGELOG_FILE: changeLog.xml
-   volumes:
-    - ./liquibase/changeLog/:/liquibase/changelog/
-   command: --defaults-file=/liquibase/changelog/liquibase.properties update
-   depends_on: [postgres]
-   networks:
       - backroom-nt
 
   flyway:
