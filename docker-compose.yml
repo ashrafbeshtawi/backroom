@@ -23,7 +23,7 @@ services:
       POSTGRES_USER: ${DATABASE_USER}
       POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
     volumes:
-      - ./pqsql:/var/www/pqsql/
+      - ./postgresql:/var/lib/postgresql/data
     ports:
       - "1010:5432"
     networks:
