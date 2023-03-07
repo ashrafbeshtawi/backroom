@@ -1,12 +1,13 @@
-# backroom
+# Backroom
+A zero configuration E-commerce build wiht Symfony, Docker, Postgresql, Flyway & Nuxt.js
 
 ## Build
 
 ```bash
 # install dependencies
-$ dc up --build
+$ dc up
 ```
 
-## Details
-This app runs Symfony & Postgres in the Backend & Nuxtjs as Frontend
-Target is to build an E-commerce App with full docerization
+## Run Database Mirgation
+dc up flyway
+
