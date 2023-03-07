@@ -1,5 +1,5 @@
 # Backroom
-A zero configuration E-commerce build wiht Symfony, Docker, Postgresql, Flyway & Nuxt.js
+A zero configuration E-commerce built with Symfony, Docker, Postgresql, Flyway & Nuxt.js
 
 ## Bootup the project
 ```bash
