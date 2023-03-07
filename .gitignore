@@ -1,5 +1,5 @@
 ###> postgresql data
-postgresql
+postgresql/
 ###> symfony/framework-bundle ###
 symfony/.env.local
 symfony/.env.local.php
