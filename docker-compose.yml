@@ -32,7 +32,7 @@ services:
   nuxtjs:
     container_name: nuxtjs
     build:
-      context: ./frontend
+      context: ./nuxtjs
       dockerfile: Dockerfile
     restart: always
     environment:
@@ -48,9 +48,16 @@ services:
   flyway:
     container_name: flyway
     image: flyway/flyway
-    command: -url=jdbc:postgresql://${DATABASE_HOST}:${DATABASE_PORT}/${DATABASE_NAME} -schemas=public -user=${DATABASE_USER} -password=${DATABASE_PASSWORD} migrate
+    environment:
+        FLYWAY_URL: ${FLYWAY_URL}
+        FLYWAY_USER: ${DATABASE_USER}
+        FLYWAY_PASSWORD: ${DATABASE_PASSWORD}
+        FLYWAY_SCHEMAS: ${FLYWAY_SCHEMAS}
+        FLYWAY_LOCATIONS: ${FLYWAY_LOCATIONS}
+    command: migrate
     volumes:
-      - ./dbmigration:/flyway/sql
+      - ./flyway/sql:/flyway/sql
+      - ./flyway/conf:/flyway/conf
     depends_on: [postgres]
     networks:
       - backroom-nt
