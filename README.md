@@ -1,13 +1,12 @@
 # Backroom
 A zero configuration E-commerce build wiht Symfony, Docker, Postgresql, Flyway & Nuxt.js
 
-## Build
-
+## Bootup the project
 ```bash
-# install dependencies
-$ dc up
+ dc up
 ```
 
 ## Run Database Mirgation
+```bash
 dc up flyway
-
+```
