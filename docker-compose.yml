@@ -68,20 +68,6 @@ services:
     networks:
       - backroom-nt
 
-  db:
-    container_name: db
-    image: postgres:alpine3.17
-    restart: always
-    environment:
-      POSTGRES_USER: ${DATABASE_USER}
-      POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
-    volumes:
-      - ./pqsql:/var/www/pqsql/
-    ports:
-      - "1010:5432"
-    networks:
-      - backroom-nt
-
   adminer:
     image: adminer
     restart: always
