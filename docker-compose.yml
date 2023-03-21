@@ -41,7 +41,7 @@ services:
     ports:
       [ "3000:3000" ]
     volumes:
-        [ ./frontend:/frontend/ ]
+        [ ./nuxtjs:/nuxtjs/ ]
     networks:
       - backroom-nt
 
