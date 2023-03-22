@@ -9,10 +9,10 @@ use Doctrine\ORM\Mapping\GeneratedValue;
 
 /**
  * @ORM\Entity
- * @ORM\Table(name="user")
+ * @ORM\Table(name="users")
  */
 #[ApiResource]
-class User {
+class Users {
   /**
    * @ORM\Id()
    * @ORM\GeneratedValue()
