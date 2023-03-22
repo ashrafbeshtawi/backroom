@@ -3610,7 +3610,8 @@
         <argument type="service" id="doctrine.orm.container_repository_factory"/>
       </call>
     </service>
-    <service id="doctrine.orm.default_attribute_metadata_driver" class="Doctrine\ORM\Mapping\Driver\AttributeDriver">
+    <service id="doctrine.orm.default_annotation_metadata_driver" class="Doctrine\ORM\Mapping\Driver\AnnotationDriver">
+      <argument type="service" id="annotations.cached_reader"/>
       <argument type="collection">
         <argument>/var/www/html/src/Entity</argument>
       </argument>
@@ -5057,7 +5058,7 @@
     </service>
     <service id=".doctrine.orm.default_metadata_driver.inner" class="Doctrine\Persistence\Mapping\Driver\MappingDriverChain">
       <call method="addDriver">
-        <argument type="service" id="doctrine.orm.default_attribute_metadata_driver"/>
+        <argument type="service" id="doctrine.orm.default_annotation_metadata_driver"/>
         <argument>App\Entity</argument>
       </call>
     </service>

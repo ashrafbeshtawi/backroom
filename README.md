@@ -10,3 +10,13 @@ A zero configuration E-commerce built with Symfony, Docker, Postgresql, Flyway &
 ```bash
 dc up flyway
 ```
+
+## Create Symfony Database Mirgation
+```bash
+php bin/console doctrine:migrations:diff
+```
+
+## Run Symfony Database Mirgation
+```bash
+php bin/console doctrine:migrations:migrate
+```
