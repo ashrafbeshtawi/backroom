@@ -3,26 +3,25 @@
 namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
-use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\Mapping\Entity;
+
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\GeneratedValue;
+use Doctrine\ORM\Mapping\Table;
+use Doctrine\ORM\Mapping\Id;
 
-/**
- * @ORM\Entity
- * @ORM\Table(name="users")
- */
+
 #[ApiResource]
+#[Entity]
+#[Table(name: 'users', schema: 'public')]
 class Users {
-  /**
-   * @ORM\Id()
-   * @ORM\GeneratedValue()
-   * @ORM\Column(type="integer")
-   */
+
+  #[Id]
+  #[GeneratedValue()]
+  #[Column(name: 'id', type: 'integer')]
   private int $id;
 
-   /**
-   * @ORM\Column(name="name", type="string")
-   */
+  #[Column(name: 'name', type: 'string')]
   private string $name;
 
   public function getId() {
