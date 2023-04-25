@@ -15,9 +15,9 @@ COPY . /var/www/
 RUN composer install
 
 ### jwt
-RUN     set -e &&\
-        apt-get install openssl &&\
-        apt-get install acl &&\
-        bin/console lexik:jwt:generate-keypair --overwrite &&\
-        setfacl -R -m u:www-data:rX -m u:"$(whoami)":rwX config/jwt &&\
-        setfacl -dR -m u:www-data:rX -m u:"$(whoami)":rwX config/jwt
+#RUN     set -e &&\
+#        apt-get install openssl &&\
+#        apt-get install acl &&\
+#        bin/console lexik:jwt:generate-keypair --overwrite &&\
+#        setfacl -R -m u:www-data:rX -m u:"$(whoami)":rwX config/jwt &&\
+#        setfacl -dR -m u:www-data:rX -m u:"$(whoami)":rwX config/jwt
