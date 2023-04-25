@@ -7,4 +7,5 @@ RUN apt-get update && \
     docker-php-ext-enable xdebug && \
     a2enmod rewrite
 
+RUN composer install
 COPY . /var/www/html/
