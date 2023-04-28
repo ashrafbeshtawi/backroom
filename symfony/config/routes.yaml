@@ -1,10 +1,3 @@
 controllers:
-    resource:
-        path: ../src/Controller/
-        namespace: App\Controller
+    resource: ../src/Controller/
     type: attribute
-
-
-products:
-    path: /dummy
-    controller: App\Controller\DummyController::index
