@@ -8,16 +8,17 @@ use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Put;
 use DateTimeInterface;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;
 use Doctrine\ORM\Mapping\GeneratedValue;
 use Doctrine\ORM\Mapping\Id;
-use Doctrine\ORM\Mapping\ManyToOne;
+use Doctrine\ORM\Mapping\OneToMany;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
- *  A Product
+ *  A Category
  */
 #[ApiResource(
   operations: [
@@ -31,13 +32,16 @@ use Symfony\Component\Serializer\Annotation\Groups;
   denormalizationContext: ['groups' => ['write']]
 )]
 #[Entity]
-class Product {
+class Category {
+
   public function __construct() {
+    $this->products = new ArrayCollection();
     $this->createdAt = new \DateTimeImmutable();
     $this->updatedAt = new \DateTimeImmutable();
   }
+
   /**
-   * The id of the Product
+   * The id of the Category
    * @var int|null
    */
   #[Id]
@@ -46,9 +50,8 @@ class Product {
   #[Groups(['read'])]
   private ?int $id = null;
 
-
   /**
-   * The name of the Product
+   * The name of the Category
    * @var string
    */
   #[Column(type: Types::STRING)]
@@ -56,15 +59,31 @@ class Product {
   private string $name = '';
 
   /**
-   * The description of the Product
+   * The description of the Category
    * @var string
    */
-  #[Column(type: Types::TEXT)]
+  #[Column(type: Types::STRING)]
   #[Groups(['read', 'write'])]
   private string $description = '';
 
   /**
-   * The listing date of the Product
+   * The hidden state of the Category
+   * @var bool
+   */
+  #[Column(type: Types::BOOLEAN)]
+  #[Groups(['write'])]
+  private bool $hidden = false;
+
+  /**
+   * The deletion state of the Category
+   * @var bool
+   */
+  #[Column(type: Types::BOOLEAN)]
+  #[Groups(['write'])]
+  private bool $deleted = false;
+
+  /**
+   * The listing date of the Category
    * @var ?DateTimeInterface
    */
   #[Column(type: Types::DATETIME_MUTABLE)]
@@ -72,24 +91,30 @@ class Product {
   private ?DateTimeInterface $createdAt = null;
 
   /**
-   * The date of the last update of Product
+   * The date of the last update of Category
    * @var ?DateTimeInterface
    */
   #[Column(type: Types::DATETIME_MUTABLE)]
   #[Groups(['read'])]
   private ?DateTimeInterface $updatedAt = null;
+  /**
+   * @return iterable
+   */
 
   /**
-   * The Category of the Product
-   * @var ?Category
+   * The products of this Category
    */
-  #[ManyToOne(
-    targetEntity: Category::class,
-    inversedBy: "products"
+  #[OneToMany(
+    mappedBy: 'category',
+    targetEntity: Product::class,
+    cascade: ['persist', 'remove']
   )]
-  #[Groups(['read', 'write'])]
-  private ?Category $category = null;
+  #[Groups(['read'])]
+  private iterable $products;
 
+  public function getProducts(): iterable {
+    return $this->products;
+  }
 
   /**
    * @return int|null
@@ -106,17 +131,17 @@ class Product {
   }
 
   /**
-   * @param string $name
-   */
-  public function setName(string $name): void {
-    $this->name = $name;
-  }
-
-  /**
    * @return string
    */
   public function getName(): string {
     return $this->name;
+  }
+
+  /**
+   * @param string $name
+   */
+  public function setName(string $name): void {
+    $this->name = $name;
   }
 
   /**
@@ -134,17 +159,31 @@ class Product {
   }
 
   /**
-   * @return Category|null
+   * @return bool
    */
-  public function getCategory(): ?Category {
-    return $this->category;
+  public function isHidden(): bool {
+    return $this->hidden;
   }
 
   /**
-   * @param Category|null Category
+   * @param bool $hidden
    */
-  public function setCategory(?Category $category): void {
-    $this->category = $category;
+  public function setHidden(bool $hidden): void {
+    $this->hidden = $hidden;
+  }
+
+  /**
+   * @return bool
+   */
+  public function isDeleted(): bool {
+    return $this->deleted;
+  }
+
+  /**
+   * @param bool $deleted
+   */
+  public function setDeleted(bool $deleted): void {
+    $this->deleted = $deleted;
   }
 
   /**
@@ -156,19 +195,19 @@ class Product {
   }
 
   /**
-   * @param DateTimeInterface|null $createdAt
-   */
-  public function setCreatedAt(?DateTimeInterface $createdAt): void
-  {
-    $this->createdAt = $createdAt;
-  }
-
-  /**
    * @return DateTimeInterface|null
    */
   public function getUpdatedAt(): ?DateTimeInterface
   {
     return $this->updatedAt;
+  }
+
+  /**
+   * @param DateTimeInterface|null $createdAt
+   */
+  public function setCreatedAt(?DateTimeInterface $createdAt): void
+  {
+    $this->createdAt = $createdAt;
   }
 
   /**
@@ -178,8 +217,6 @@ class Product {
   {
     $this->updatedAt = $updatedAt;
   }
-
-
 
 
 }
