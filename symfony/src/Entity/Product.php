@@ -7,6 +7,7 @@ use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Put;
+use App\Processor\Product\PutProductProcessor;
 use DateTimeImmutable;
 use DateTimeInterface;
 use Doctrine\DBAL\Types\Types;
@@ -25,7 +26,9 @@ use Symfony\Component\Serializer\Annotation\Groups;
     new GetCollection(),
     new Get(),
     new Post(),
-    new Put(),
+    new Put(
+      processor: PutProductProcessor::class
+    ),
     new Delete(),
   ],
   normalizationContext: ['groups' => ['read']],
