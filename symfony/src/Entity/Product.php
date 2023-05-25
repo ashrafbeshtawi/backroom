@@ -7,6 +7,7 @@ use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Put;
+use DateTimeImmutable;
 use DateTimeInterface;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping\Column;
@@ -33,8 +34,8 @@ use Symfony\Component\Serializer\Annotation\Groups;
 #[Entity]
 class Product {
   public function __construct() {
-    $this->createdAt = new \DateTimeImmutable();
-    $this->updatedAt = new \DateTimeImmutable();
+    $this->createdAt = new DateTimeImmutable();
+    $this->updatedAt = new DateTimeImmutable();
   }
   /**
    * The id of the Product
@@ -67,28 +68,28 @@ class Product {
    * The listing date of the Product
    * @var ?DateTimeInterface
    */
-  #[Column(type: Types::DATETIME_MUTABLE)]
+  #[Column(type: Types::DATETIME_IMMUTABLE)]
   #[Groups(['read'])]
   private ?DateTimeInterface $createdAt = null;
 
   /**
    * The date of the last update of Product
-   * @var ?DateTimeInterface
+   * @var DateTimeInterface
    */
-  #[Column(type: Types::DATETIME_MUTABLE)]
+  #[Column(type: Types::DATETIME_IMMUTABLE)]
   #[Groups(['read'])]
-  private ?DateTimeInterface $updatedAt = null;
+  private DateTimeInterface $updatedAt;
 
   /**
    * The Category of the Product
-   * @var ?Category
+   * @var Category
    */
   #[ManyToOne(
     targetEntity: Category::class,
     inversedBy: "products"
   )]
   #[Groups(['read', 'write'])]
-  private ?Category $category = null;
+  private Category $category;
 
 
   /**
@@ -141,45 +142,43 @@ class Product {
   }
 
   /**
-   * @param Category|null Category
+   * @param Category|null $category
    */
   public function setCategory(?Category $category): void {
     $this->category = $category;
   }
 
   /**
-   * @return DateTimeInterface|null
+   * @return DateTimeInterface
    */
-  public function getCreatedAt(): ?DateTimeInterface
+  public function getCreatedAt(): DateTimeInterface
   {
     return $this->createdAt;
   }
 
   /**
-   * @param DateTimeInterface|null $createdAt
+   * @param DateTimeInterface $createdAt
    */
-  public function setCreatedAt(?DateTimeInterface $createdAt): void
+  public function setCreatedAt(DateTimeInterface $createdAt): void
   {
     $this->createdAt = $createdAt;
   }
 
   /**
-   * @return DateTimeInterface|null
+   * @return DateTimeInterface
    */
-  public function getUpdatedAt(): ?DateTimeInterface
+  public function getUpdatedAt(): DateTimeInterface
   {
     return $this->updatedAt;
   }
 
   /**
-   * @param DateTimeInterface|null $updatedAt
+   * @param DateTimeInterface $updatedAt
    */
-  public function setUpdatedAt(?DateTimeInterface $updatedAt): void
+  public function setUpdatedAt(DateTimeInterface $updatedAt): void
   {
     $this->updatedAt = $updatedAt;
   }
-
-
 
 
 }

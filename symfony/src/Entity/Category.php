@@ -7,6 +7,7 @@ use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Put;
+use DateTimeImmutable;
 use DateTimeInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\DBAL\Types\Types;
@@ -36,8 +37,8 @@ class Category {
 
   public function __construct() {
     $this->products = new ArrayCollection();
-    $this->createdAt = new \DateTimeImmutable();
-    $this->updatedAt = new \DateTimeImmutable();
+    $this->createdAt = new DateTimeImmutable();
+    $this->updatedAt = new DateTimeImmutable();
   }
 
   /**
@@ -84,22 +85,19 @@ class Category {
 
   /**
    * The listing date of the Category
-   * @var ?DateTimeInterface
+   * @var DateTimeInterface
    */
-  #[Column(type: Types::DATETIME_MUTABLE)]
+  #[Column(type: Types::DATETIME_IMMUTABLE)]
   #[Groups(['read'])]
-  private ?DateTimeInterface $createdAt = null;
+  private DateTimeInterface $createdAt;
 
   /**
    * The date of the last update of Category
-   * @var ?DateTimeInterface
+   * @var DateTimeInterface
    */
-  #[Column(type: Types::DATETIME_MUTABLE)]
+  #[Column(type: Types::DATETIME_IMMUTABLE)]
   #[Groups(['read'])]
-  private ?DateTimeInterface $updatedAt = null;
-  /**
-   * @return iterable
-   */
+  private DateTimeInterface $updatedAt;
 
   /**
    * The products of this Category
@@ -112,8 +110,19 @@ class Category {
   #[Groups(['read'])]
   private iterable $products;
 
+  /**
+   * @return iterable
+   */
   public function getProducts(): iterable {
     return $this->products;
+  }
+
+  /**
+   * @param iterable $products
+   */
+  public function setProducts(iterable $products): void
+  {
+    $this->products = $products;
   }
 
   /**
@@ -187,33 +196,33 @@ class Category {
   }
 
   /**
-   * @return DateTimeInterface|null
+   * @return DateTimeInterface
    */
-  public function getCreatedAt(): ?DateTimeInterface
+  public function getCreatedAt(): DateTimeInterface
   {
     return $this->createdAt;
   }
 
   /**
-   * @return DateTimeInterface|null
+   * @return DateTimeInterface
    */
-  public function getUpdatedAt(): ?DateTimeInterface
+  public function getUpdatedAt(): DateTimeInterface
   {
     return $this->updatedAt;
   }
 
   /**
-   * @param DateTimeInterface|null $createdAt
+   * @param DateTimeInterface $createdAt
    */
-  public function setCreatedAt(?DateTimeInterface $createdAt): void
+  public function setCreatedAt(DateTimeInterface $createdAt): void
   {
     $this->createdAt = $createdAt;
   }
 
   /**
-   * @param DateTimeInterface|null $updatedAt
+   * @param DateTimeInterface $updatedAt
    */
-  public function setUpdatedAt(?DateTimeInterface $updatedAt): void
+  public function setUpdatedAt(DateTimeInterface $updatedAt): void
   {
     $this->updatedAt = $updatedAt;
   }
