@@ -21,8 +21,8 @@ use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ApiResource(
   operations: [
-    new GetCollection(),
-    new Get(),
+    new GetCollection(security: "is_granted('ROLE_ADMIN')"),
+    new Get(security: "is_granted('ROLE_ADMIN')"),
     new Post(
       processor: POSTUserProcessor::class
     ),
