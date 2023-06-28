@@ -17,6 +17,7 @@ use Doctrine\ORM\Mapping\Id;
 use Doctrine\ORM\Mapping\Table;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ApiResource(
   operations: [
@@ -28,6 +29,8 @@ use Symfony\Component\Security\Core\User\UserInterface;
     new Put(),
     new Delete(),
   ],
+  normalizationContext: ['groups' => ['read']],
+  denormalizationContext: ['groups' => ['write']]
 )]
 #[Entity(repositoryClass: UserRepository::class)]
 #[Table(name: '`user`')]
@@ -38,12 +41,15 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface {
     private ?int $id = null;
 
     #[Column(length: 180, unique: true)]
+    #[Groups(['read', 'write'])]
     private ?string $email = null;
 
     #[Column]
+    #[Groups(['read'])]
     private array $roles = [];
 
     #[Column]
+    #[Groups(['read', 'write'])]
     private ?string $password = null;
 
     public function getId(): ?int {
