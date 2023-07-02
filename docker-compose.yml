@@ -69,16 +69,14 @@ services:
   adminer:
     image: adminer
     restart: always
-
     networks:
       - backroom-nt
     ports:
       - "5050:8080"
 
   mailcatcher:
-    container_name: mailcatcher
-    image: schickling/mailcatcher
-    restart: always
+    image: dockage/mailcatcher
+    restart: on-failure
     networks:
       - backroom-nt
     ports:

@@ -6,6 +6,7 @@ use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProcessorInterface;
 use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Email;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
@@ -19,6 +20,9 @@ final class POSTUserProcessor implements ProcessorInterface
   ) {
   }
 
+  /**
+   * @throws TransportExceptionInterface
+   */
   public function process($data, Operation $operation, array $uriVariables = [], array $context = []) {
     /** @var User $data */
     $hashedPassword = $this->passwordHasher->hashPassword(
@@ -30,6 +34,7 @@ final class POSTUserProcessor implements ProcessorInterface
     $data->setRoles(['ROLE_USER']);
     $this->entityManager->persist($data);
     $this->entityManager->flush();
+
     $email = (new Email())
       ->from('hello@example.com')
       ->to('you@example.com')
@@ -38,10 +43,8 @@ final class POSTUserProcessor implements ProcessorInterface
       //->replyTo('fabien@example.com')
       //->priority(Email::PRIORITY_HIGH)
       ->subject('Time for Symfony Mailer!')
-      ->text('Sending emails is fun again!')
-      ->html('<p>See Twig integration for better HTML integration!</p>');
+      ->text('Sending emails is fun again!');
 
     $this->mailer->send($email);
-
   }
 }
