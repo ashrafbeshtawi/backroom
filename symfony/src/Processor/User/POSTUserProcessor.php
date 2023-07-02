@@ -8,6 +8,7 @@ use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mailer\Transport\TransportInterface;
 use Symfony\Component\Mime\Email;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
@@ -16,7 +17,7 @@ final class POSTUserProcessor implements ProcessorInterface
   public function __construct(
     private readonly UserPasswordHasherInterface $passwordHasher,
     private readonly EntityManagerInterface $entityManager,
-    private MailerInterface $mailer
+    private readonly TransportInterface $mailer
   ) {
   }
 
