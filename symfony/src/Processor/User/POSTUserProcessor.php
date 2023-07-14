@@ -8,7 +8,6 @@ use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
-use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mailer\Transport\TransportInterface;
 use Symfony\Component\Mime\Email;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
@@ -31,22 +30,26 @@ final class POSTUserProcessor implements ProcessorInterface
       $data,
       $data->getPassword()
     );
-    $activationSecret = $this->passwordHasher->hashPassword(
-      $data,
-      $hashedPassword . getenv('HASH_KEY')
-    );
-
     $data->setPassword($hashedPassword);
     $data->eraseCredentials();
     $data->setRoles(['ROLE_USER']);
     $this->entityManager->persist($data);
     $this->entityManager->flush();
 
+    $activationSecret = $this->passwordHasher->hashPassword(
+      $data,
+      $hashedPassword . getenv('HASH_KEY')
+    );
+    $activationSecret = preg_replace('/[^0-9\']/', '', $activationSecret);
+    $activationLink = 'api/activate/' .  $data->getId() . '/' . $activationSecret;
+
     $email = (new Email())
       ->from('noreply@example.com')
       ->to('client@email.com')
       ->subject('Activation code')
-      ->html('Sending emails is fun again! <br/>' . $activationSecret);
+      ->html(
+        'Sending emails is fun again! <br/>'
+        . $activationLink);
     $this->mailer->send($email);
   }
 }

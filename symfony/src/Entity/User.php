@@ -8,7 +8,9 @@ use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Put;
+use App\Controller\ActivateUserController;
 use App\Processor\User\POSTUserProcessor;
+use App\Provider\ActivateUserProvider;
 use App\Repository\UserRepository;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;
@@ -23,7 +25,17 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ApiResource(
   operations: [
     new GetCollection(security: "is_granted('ROLE_ADMIN')"),
-    new Get(security: "is_granted('ROLE_ADMIN')"),
+    new Get(
+      uriTemplate: '/activate/{id}/{key}',
+      requirements: [
+        'id' => '\d+',
+        'key' => '\w+'
+      ],
+      controller: ActivateUserController::class,
+    ),
+    new Get(
+      processor: POSTUserProcessor::class
+    ),
     new Post(
       processor: POSTUserProcessor::class
     ),
@@ -53,6 +65,24 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface {
     #[Column]
     #[Groups(['read', 'write'])]
     private ?string $password = null;
+
+  public $key;
+
+  /**
+   * @return mixed
+   */
+  public function getKey()
+  {
+    return $this->key;
+  }
+
+  /**
+   * @param mixed $key
+   */
+  public function setKey($key): void
+  {
+    $this->key = $key;
+  }
 
     public function getId(): ?int {
         return $this->id;
