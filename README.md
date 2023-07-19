@@ -14,6 +14,10 @@ cp symfony/.env-example symfony/.env
 ```
 ### Generate the SSL keys
 ```bash
+docker exec symfony composer install
+```
+### Generate the SSL keys
+```bash
 docker exec symfony bin/console lexik:jwt:generate-keypair
 ```
 ### Create Symfony Database Mirgation
@@ -26,7 +30,7 @@ docker exec symfony bin/console doctrine:migrations:migrate
 ```
 
 
-## Run Database Mirgation
+## Run Database Mirgation (optional)
 ```bash
 dc up flyway
 ```
