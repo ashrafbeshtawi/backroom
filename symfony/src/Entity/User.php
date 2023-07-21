@@ -21,11 +21,12 @@ use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
+use ApiPlatform\OpenApi\Model;
 
 #[ApiResource(
   operations: [
     new GetCollection(security: "is_granted('ROLE_ADMIN')"),
-    new Get(security: "is_granted('ROLE_ADMIN')"),
+    new Get(security: "is_granted('ROLE_ADMIN') or (is_granted('ROLE_USER') and object.getId() == user.getId())"),
     new Get(
       uriTemplate: '/activate/{id}/{secret}',
       requirements: [
@@ -33,6 +34,17 @@ use Symfony\Component\Validator\Constraints as Assert;
         'secret' => '\d+'
       ],
       controller: ActivateUserController::class,
+      openapi: new Model\Operation(
+        responses: [
+          '200' => [
+            'description'=> 'Successful activation',
+          ],
+          '400' => [
+            'description'=> 'Activation failed',
+          ],
+        ],
+        summary: 'Activate User with Id and Secret',
+      ),
       provider: ActivateUserProvider::class,
     ),
     new Post(
@@ -107,6 +119,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface {
 
         return $this;
     }
+
+  /**
+   * @param string $role
+   * @return bool
+   */
+  public function hasRole(string $role): bool {
+    return in_array($role, $this->roles);
+  }
 
     /**
      * @see PasswordAuthenticatedUserInterface
