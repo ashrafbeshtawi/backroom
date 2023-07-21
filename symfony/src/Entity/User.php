@@ -9,6 +9,7 @@ use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Put;
 use App\Controller\ActivateUserController;
 use App\Processor\User\POSTUserProcessor;
+use App\Processor\User\PUTUserProcessor;
 use App\Provider\ActivateUserProvider;
 use App\Repository\UserRepository;
 use Doctrine\ORM\Mapping\Column;
@@ -37,8 +38,10 @@ use Symfony\Component\Validator\Constraints as Assert;
     new Post(
       processor: POSTUserProcessor::class
     ),
-    // As for now only admin can edit users .. to be changed later
-    new Put(security: "is_granted('ROLE_ADMIN')"),
+    new Put(
+      security: "is_granted('ROLE_ADMIN') or (is_granted('ROLE_USER') and object.getId() == user.getId())",
+      processor: PUTUserProcessor::class
+    ),
   ],
   normalizationContext: ['groups' => ['read']],
   denormalizationContext: ['groups' => ['write']]
