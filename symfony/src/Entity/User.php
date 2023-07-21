@@ -37,7 +37,8 @@ use Symfony\Component\Validator\Constraints as Assert;
     new Post(
       processor: POSTUserProcessor::class
     ),
-    new Put(),
+    // As for now only admin can edit users .. to be changed later
+    new Put(security: "is_granted('ROLE_ADMIN')"),
   ],
   normalizationContext: ['groups' => ['read']],
   denormalizationContext: ['groups' => ['write']]
