@@ -10,6 +10,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\AsController;
+use Webmozart\Assert\Assert;
 
 
 #[AsController]
@@ -28,6 +29,7 @@ final class ActivateUserController extends AbstractController
    */
   public function __invoke(User $user, Request $request): Response {
     $secret = $request->get('secret');
+    Assert::stringNotEmpty($secret);
     $res = Hasher::isValidActivationHash($secret, $user->getPassword());
     $roles = $user->getRoles();
     if ($res && !in_array(Roles::ACTIVATED, $roles)) {
