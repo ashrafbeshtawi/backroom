@@ -5,6 +5,7 @@ namespace App\Processor\User;
 use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProcessorInterface;
 use App\Entity\User;
+use App\security\Hasher;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
@@ -36,11 +37,7 @@ final class POSTUserProcessor implements ProcessorInterface
     $this->entityManager->persist($data);
     $this->entityManager->flush();
 
-    $activationSecret = $this->passwordHasher->hashPassword(
-      $data,
-      $hashedPassword . getenv('HASH_KEY')
-    );
-    $activationSecret = preg_replace('/[^0-9\']/', '', $activationSecret);
+    $activationSecret = Hasher::generateActivationHash($hashedPassword);
     $activationLink = 'api/activate/' .  $data->getId() . '/' . $activationSecret;
 
     $email = (new Email())
@@ -49,7 +46,8 @@ final class POSTUserProcessor implements ProcessorInterface
       ->subject('Activation code')
       ->html(
         'Sending emails is fun again! <br/>'
-        . $activationLink);
+        . $activationLink
+      );
     $this->mailer->send($email);
   }
 }

@@ -3,7 +3,6 @@
 namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
-use ApiPlatform\Metadata\Delete;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Post;
@@ -27,18 +26,18 @@ use Symfony\Component\Validator\Constraints as Assert;
     new GetCollection(security: "is_granted('ROLE_ADMIN')"),
     new Get(security: "is_granted('ROLE_ADMIN')"),
     new Get(
-      uriTemplate: '/activate/{id}/{key}',
+      uriTemplate: '/activate/{id}/{secret}',
       requirements: [
         'id' => '\d+',
-        'key' => '\w+'
+        'secret' => '\d+'
       ],
       controller: ActivateUserController::class,
+      provider: ActivateUserProvider::class,
     ),
     new Post(
       processor: POSTUserProcessor::class
     ),
     new Put(),
-    new Delete(),
   ],
   normalizationContext: ['groups' => ['read']],
   denormalizationContext: ['groups' => ['write']]
@@ -61,6 +60,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface {
     private array $roles = [];
 
     #[Column]
+    #[Assert\Length(min: 8)]
     #[Groups(['read', 'write'])]
     private ?string $password = null;
 

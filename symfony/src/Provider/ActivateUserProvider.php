@@ -17,7 +17,7 @@ class ActivateUserProvider implements ProviderInterface
   /**
    * Provides the user based on the given id
    * the purpose of the provider is to select the user
-   * while ognoring the key, which will be used by the controller
+   * while ignoring the key, which will be used by the controller
    * @param Operation $operation
    * @param array $uriVariables
    * @param array $context
