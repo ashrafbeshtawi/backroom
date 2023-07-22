@@ -77,7 +77,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface {
 
     #[Column]
     #[Assert\Length(min: 8)]
-    #[Groups(['read', 'write'])]
+    #[Groups(['write'])]
     private ?string $password = null;
 
     public function getId(): ?int {
