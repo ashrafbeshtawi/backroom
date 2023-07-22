@@ -1,36 +1,23 @@
 # Backroom
 A zero configuration App built with Symfony, Docker, Postgresql, Flyway & Nuxt.js
 
-## Bootup the project
-### init .env
+### Boot-Up the project
 ```bash
-cp .env-example .env
-cp symfony/.env-example symfony/.env
+chmod +x bin/build
+bin/build
 ```
 
-### Run the Docker Containers
-```bash
- dc up -d
-```
-### Generate the SSL keys
-```bash
-docker exec symfony composer install
-```
-### Generate the SSL keys
-```bash
-docker exec symfony bin/console lexik:jwt:generate-keypair
-```
-### Create Symfony Database Mirgation
+### Create Symfony Database Migration (check if you really have to)
 ```bash
 docker exec symfony bin/console doctrine:migrations:diff
 ```
-### Run Symfony Database Mirgation
+
+## Run Php-Unit
 ```bash
-docker exec symfony bin/console doctrine:migrations:migrate
+docker exec symfony bin/phpunit PATH_TO_UNIT
 ```
 
-
-## Run Database Mirgation (optional)
+## Run Database Migration (optional)
 ```bash
 dc up flyway
 ```
