@@ -1,0 +1,22 @@
+#!/bin/bash
+
+# Check if there is exactly one argument
+if [ $# -ne 1 ]; then
+  echo "Usage: $0 <command>"
+  exit 1
+fi
+
+# Get the argument and store it in a variable
+command=$1
+
+# Check the value of the argument and execute the appropriate command
+if [ "$command" = "migrate" ]; then
+  docker exec symfony bin/console doctrine:migrations:migrate
+
+elif [ "$command" = "create" ]; then
+  docker exec symfony bin/console doctrine:migrations:diff
+
+else
+  # Command not recognized
+  echo "Error: Unrecognized command '$command'. Please use 'migrate' or 'create'."
+fi

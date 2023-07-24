@@ -1,0 +1,12 @@
+#!/bin/bash
+
+# Check if there is one argument
+if [ $# -ne 1 ]; then
+  echo "Usage: $0 <argument>"
+  exit 1
+fi
+
+# Get the argument and store it in a different variable
+arg=$1
+
+docker exec symfony bin/phpunit "$arg"
