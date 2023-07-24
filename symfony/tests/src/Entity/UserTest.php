@@ -3,6 +3,8 @@
 namespace App\Tests\src\Entity;
 
 use App\Factory\UserFactory;
+use App\security\Hasher;
+use App\Utils\Roles;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Zenstruck\Browser\Test\HasBrowser;
 use Zenstruck\Foundry\Test\ResetDatabase;
@@ -51,6 +53,29 @@ class UserTest extends KernelTestCase {
       ->actingAs($user)
       ->get('api/users')
       ->assertStatus(Http::FORBIDDEN());
+  }
+  public function testGetUsersWithAdminRole() {
+    $user = UserFactory::createOne(['roles' => [Roles::ADMIN]]);
+    $this->browser()
+      ->actingAs($user)
+      ->get('api/users')
+      ->assertStatus(Http::OK());
+  }
+
+  public function testActivateUser() {
+    $user = UserFactory::createOne();
+    $secret = Hasher::generateActivationHash($user->getPassword());
+    $this->browser()
+      ->actingAs($user)
+      ->get('api/activate/'. $user->getId() . '/' . $secret)
+      ->assertStatus(Http::OK());
+
+    $this->browser()
+      ->actingAs($user)
+      ->get('api/users/' . $user->getId())
+      ->assertStatus(Http::OK())
+      ->assertJson()
+      ->assertJsonMatches('roles', [Roles::USER, Roles::ACTIVATED]);
   }
 
 
