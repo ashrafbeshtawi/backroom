@@ -7,7 +7,6 @@ use ApiPlatform\State\ProcessorInterface;
 use App\Entity\User;
 use App\security\Hasher;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 use Symfony\Component\Mailer\Transport\TransportInterface;
 use Symfony\Component\Mime\Email;

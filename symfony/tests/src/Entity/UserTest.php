@@ -9,6 +9,7 @@ use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Zenstruck\Browser\Test\HasBrowser;
 use Zenstruck\Foundry\Test\ResetDatabase;
 use JustSteveKing\StatusCode\Http;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class UserTest extends KernelTestCase {
   use HasBrowser;
@@ -76,6 +77,52 @@ class UserTest extends KernelTestCase {
       ->assertStatus(Http::OK())
       ->assertJson()
       ->assertJsonMatches('roles', [Roles::USER, Roles::ACTIVATED]);
+  }
+
+  public function testLoginUserWillFailDueToWrongPassword() {
+    $this->browser()
+      ->post('api/users',[
+        'headers' => ['Content-Type' => 'application/json'],
+        'json' => [
+          'email' => 'test@test.com',
+          'password' => 'password123',
+        ],
+      ])
+      ->assertNotAuthenticated()
+      ->assertStatus(Http::CREATED());
+
+    $this->browser()
+      ->post('api/login_check',[
+        'headers' => ['Content-Type' => 'application/json'],
+        'json' => [
+          'username' => 'test@test.com',
+          'password' => 'wrongpassword',
+        ],
+      ])
+      ->assertStatus(Http::UNAUTHORIZED());
+  }
+  public function testLoginUser() {
+    $this->browser()
+      ->post('api/users',[
+        'headers' => ['Content-Type' => 'application/json'],
+        'json' => [
+          'email' => 'test@test.com',
+          'password' => 'password123',
+        ],
+      ])
+      ->assertNotAuthenticated()
+      ->assertStatus(Http::CREATED());
+
+    $this->browser()
+      ->post('api/login_check',[
+        'headers' => ['Content-Type' => 'application/json'],
+        'json' => [
+          'username' => 'test@test.com',
+          'password' => 'password123',
+        ],
+      ])
+      ->assertStatus(Http::OK())
+      ->assertJson();
   }
 
 
