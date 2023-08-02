@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Provider;
+namespace App\State;
 
+use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProviderInterface;
-use \ApiPlatform\Metadata\Operation;
 use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 

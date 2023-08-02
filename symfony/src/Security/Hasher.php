@@ -1,6 +1,6 @@
 <?php
 
-namespace App\security;
+namespace App\Security;
 
 class Hasher {
   public const HASH_LENGTH = 10;

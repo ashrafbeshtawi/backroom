@@ -7,26 +7,34 @@ use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Put;
+use ApiPlatform\OpenApi\Model;
 use App\Controller\ActivateUserController;
+use App\Controller\CurrentUserController;
 use App\Processor\User\POSTUserProcessor;
 use App\Processor\User\PUTUserProcessor;
-use App\Provider\ActivateUserProvider;
 use App\Repository\UserRepository;
+use App\State\ActivateUserProvider;
+use App\State\CurrentUserProvider;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;
 use Doctrine\ORM\Mapping\GeneratedValue;
 use Doctrine\ORM\Mapping\Id;
+use Doctrine\ORM\Mapping\OneToOne;
 use Doctrine\ORM\Mapping\Table;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
-use ApiPlatform\OpenApi\Model;
 
 #[ApiResource(
   operations: [
     new GetCollection(security: "is_granted('ROLE_ADMIN')"),
     new Get(security: "is_granted('ROLE_ADMIN') or (is_granted('ROLE_USER') and object.getId() == user.getId())"),
+    new Get(
+      uriTemplate: '/users/current/{id}',
+      provider: CurrentUserProvider::class,
+    ),
+
     new Get(
       uriTemplate: '/activate/{id}/{secret}',
       requirements: [
@@ -79,6 +87,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface {
     #[Assert\Length(min: 8)]
     #[Groups(['write'])]
     private ?string $password = null;
+
+    #[OneToOne(inversedBy: 'user', targetEntity: Profile::class, cascade: ["persist"])]
+    #[Groups(['read'])]
+    private Profile $profile;
 
     public function getId(): ?int {
         return $this->id;
@@ -140,6 +152,23 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface {
 
         return $this;
     }
+
+  /**
+   * @return Profile
+   */
+  public function getProfile(): Profile {
+    return $this->profile;
+  }
+
+  /**
+   * @param Profile $profile
+   * @return User
+   */
+  public function setProfile(Profile $profile): self {
+    $this->profile = $profile;
+    return $this;
+  }
+
 
     /**
      * @see UserInterface

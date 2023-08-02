@@ -2,7 +2,6 @@
 
 namespace App\Tests\src\Entity;
 
-use App\Entity\User;
 use App\Factory\UserFactory;
 use App\Security\Hasher;
 use App\Utils\Roles;
@@ -11,19 +10,12 @@ use Zenstruck\Browser\Test\HasBrowser;
 use Zenstruck\Foundry\Test\ResetDatabase;
 use JustSteveKing\StatusCode\Http;
 
-class UserTest extends KernelTestCase {
+class ProfileTest extends KernelTestCase {
   use HasBrowser;
   use ResetDatabase;
 
-  public function testGetUserId() {
-    /** @var User $user */
-    $user = UserFactory::createOne();
+  private function createUser() {
 
-    $this->browser()
-      ->actingAs($user)
-      ->get('api/usersByEmail/'.$user->getEmail())
-      ->dump()
-      ->assertStatus(Http::OK());
   }
   public function testCreateUsers() {
     $this->browser()
