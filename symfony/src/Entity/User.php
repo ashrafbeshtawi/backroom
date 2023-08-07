@@ -29,12 +29,12 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ApiResource(
   operations: [
     new GetCollection(security: "is_granted('ROLE_ADMIN')"),
-    new Get(security: "is_granted('ROLE_ADMIN') or (is_granted('ROLE_USER') and object.getId() == user.getId())"),
-    new Get(
-      uriTemplate: '/users/current/{id}',
+    new GetCollection(
+      uriTemplate: '/users/whoami/',
+      security: "is_granted('ROLE_USER')",
       provider: CurrentUserProvider::class,
     ),
-
+    new Get(security: "is_granted('ROLE_ADMIN') or (is_granted('ROLE_USER') and object.getId() == user.getId())"),
     new Get(
       uriTemplate: '/activate/{id}/{secret}',
       requirements: [
@@ -72,6 +72,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface {
     #[Id]
     #[GeneratedValue]
     #[Column]
+    #[Groups(['read'])]
     private ?int $id = null;
 
     #[Column(length: 180, unique: true)]
