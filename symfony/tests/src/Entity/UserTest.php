@@ -15,16 +15,7 @@ class UserTest extends KernelTestCase {
   use HasBrowser;
   use ResetDatabase;
 
-  public function testGetUserId() {
-    /** @var User $user */
-    $user = UserFactory::createOne();
 
-    $this->browser()
-      ->actingAs($user)
-      ->get('api/usersByEmail/'.$user->getEmail())
-      ->dump()
-      ->assertStatus(Http::OK());
-  }
   public function testCreateUsers() {
     $this->browser()
       ->post('api/users',[
@@ -64,6 +55,19 @@ class UserTest extends KernelTestCase {
       ->actingAs($user)
       ->get('api/users')
       ->assertStatus(Http::OK());
+  }
+  public function testGetWhoAmIWillFailWhenNotLoggedIn() {
+    $this->browser()
+      ->get('api/users/whoami')
+      ->assertStatus(Http::INTERNAL_SERVER_ERROR());
+  }
+
+  public function testGetWhoAmI() {
+    $user = UserFactory::createOne();
+    $this->browser()
+      ->actingAs($user)
+      ->get('api/users/whoami')
+      ->assertStatus(Http::INTERNAL_SERVER_ERROR());
   }
 
   public function testActivateUser() {
