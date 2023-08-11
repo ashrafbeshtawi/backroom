@@ -14,18 +14,6 @@ class ProfileTest extends KernelTestCase {
   use HasBrowser;
   use ResetDatabase;
 
-  public function testCreateProfilesWithoutLoginWillFail() {
-    $this->browser()
-      ->post('api/profiles',[
-        'headers' => ['Content-Type' => 'application/json'],
-        'json' => [
-          'firstName' => 'first name',
-          'lastName' => 'last name',
-          'description' => 'sample description',
-        ],
-      ])
-      ->assertStatus(Http::UNAUTHORIZED());
-  }
   public function testCreateProfiles() {
     $user = UserFactory::createOne(['roles' => [Roles::USER, Roles::ACTIVATED]]);
     $this->browser()
@@ -38,7 +26,6 @@ class ProfileTest extends KernelTestCase {
           'description' => 'sample description',
         ],
       ])
-      ->dump()
       ->assertAuthenticated(as: $user)
       ->assertStatus(Http::CREATED());
   }

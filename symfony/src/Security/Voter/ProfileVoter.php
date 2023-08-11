@@ -3,6 +3,8 @@
 namespace App\Security\Voter;
 
 use App\Entity\Profile;
+use App\Entity\User;
+use App\Utils\Roles;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -11,8 +13,7 @@ class ProfileVoter extends Voter {
     public const EDIT = 'PROFILE_EDIT';
     public const VIEW = 'PROFILE_VIEW';
 
-    protected function supports(string $attribute, mixed $subject): bool
-    {
+    protected function supports(string $attribute, mixed $subject): bool {
         // replace with your own logic
         // https://symfony.com/doc/current/security/voters.html
         return in_array($attribute, [self::EDIT, self::VIEW])
@@ -25,30 +26,19 @@ class ProfileVoter extends Voter {
    * @param TokenInterface $token
    * @return bool
    */
-    protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token): bool
-    {
-        $user = $token->getUser();
-        // if the user is anonymous, do not grant access
-        if (!$user instanceof UserInterface) {
-            return false;
-        }
-        $userFromEntity = $subject->getUser();
-        var_dump($userFromEntity->getEmail());
-        return false;
+    protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token): bool {
+      /** @var User $userFromEntity */
+      $userFromEntity = $subject->getUser();
+      /** @var User $loggedInUser */
+      $loggedInUser = $token->getUser();
 
+      // Read Profile is possible if owner is activated
+      if ($attribute === self::VIEW) {
+        return $userFromEntity && $userFromEntity->hasRole(Roles::ACTIVATED);
+      // Edit is possible if caller own the profile
+      } else {
+        return $loggedInUser && $userFromEntity && $loggedInUser->getId() === $userFromEntity->getId();
 
-        // ... (check conditions and return true to grant permission) ...
-        switch ($attribute) {
-            case self::EDIT:
-                // logic to determine if the user can EDIT
-                // return true or false
-                break;
-            case self::VIEW:
-                // logic to determine if the user can VIEW
-                // return true or false
-                break;
-        }
-
-        return false;
+      }
     }
 }

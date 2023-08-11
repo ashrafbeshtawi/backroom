@@ -9,7 +9,6 @@ use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Put;
 use ApiPlatform\OpenApi\Model;
 use App\Controller\ActivateUserController;
-use App\Controller\CurrentUserController;
 use App\Processor\User\POSTUserProcessor;
 use App\Processor\User\PUTUserProcessor;
 use App\Repository\UserRepository;
@@ -19,6 +18,7 @@ use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;
 use Doctrine\ORM\Mapping\GeneratedValue;
 use Doctrine\ORM\Mapping\Id;
+use Doctrine\ORM\Mapping\JoinColumn;
 use Doctrine\ORM\Mapping\OneToOne;
 use Doctrine\ORM\Mapping\Table;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
@@ -90,8 +90,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface {
     private ?string $password = null;
 
     #[OneToOne(inversedBy: 'user', targetEntity: Profile::class, cascade: ["persist"])]
-    #[Groups(['read'])]
+    #[JoinColumn(nullable: false)]
     private Profile $profile;
+
+  #[Groups(['read'])]
+  public function getProfileId(): ?int {
+      return $this->profile->getId();
+    }
 
     public function getId(): ?int {
         return $this->id;
@@ -103,7 +108,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface {
 
     public function setEmail(string $email): self {
         $this->email = $email;
-
         return $this;
     }
 
