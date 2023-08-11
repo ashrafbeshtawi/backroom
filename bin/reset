@@ -1,0 +1,29 @@
+#!/bin/bash
+
+## shut down database
+docker-compose rm -s -v postgres
+
+delete_folder() {
+  folder_path="$1"
+  if [ ! -d "$folder_path" ]; then
+      echo "Folder '$folder_path' does not exist."
+  else
+    # Delete the folder
+    rm -r "$folder_path"
+    echo "Folder '$folder_path' deleted successfully."
+  fi
+}
+#remove postgresql-data
+delete_folder "./postgresql"
+#remove migrations
+delete_folder "./symfony/migrations"
+mkdir "./symfony/migrations"
+
+
+## start every thing again
+docker-compose up -d postgres
+
+sleep 5
+## create new migrations
+bin/symfony create
+bin/symfony migrate

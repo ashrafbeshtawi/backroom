@@ -5,7 +5,7 @@ A zero configuration App built with Symfony, Docker, Postgresql, Flyway & Nuxt.j
 chmod +x bin/phpunit
 chmod +x bin/build
 chmod +x bin/symfony
-chmod +x bin/make
+chmod +x bin/reset
 
 ```
 ### Boot-Up the project
@@ -13,6 +13,11 @@ chmod +x bin/make
 bin/build
 ```
 ## Useful Commands
+
+### Rests Database & create & run migrations (you will lose all data)
+```bash
+bin/reset
+```
 
 ### Create Symfony Database Migration
 ```bash
@@ -22,18 +27,27 @@ bin/symfony create
 ```bash
 bin/symfony migrate
 ```
-### Create Symfony Class using console
-```bash
-bin/make somthing (like voter in symfony)
-```
+
 ## Run Php-Unit
 ```bash
 bin/phpunit PATH_TO_UNIT
 ```
 
+
 ## Run Database Migration (optional)
 ```bash
 dc up flyway
+```
+
+# API-Platform tricks (only in Symfony Container executable)
+## Create Entity-Factory
+```bash
+bin/console make:factory
+```
+
+## Run Fixtures
+```bash
+php bin/console doctrine:fixtures:load
 ```
 
 

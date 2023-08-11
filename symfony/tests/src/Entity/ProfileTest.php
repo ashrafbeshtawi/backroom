@@ -2,6 +2,7 @@
 
 namespace App\Tests\src\Entity;
 
+use App\Factory\ProfileFactory;
 use App\Factory\UserFactory;
 use App\Security\Hasher;
 use App\Utils\Roles;
@@ -14,20 +15,14 @@ class ProfileTest extends KernelTestCase {
   use HasBrowser;
   use ResetDatabase;
 
-  public function testCreateProfiles() {
+  public function testGetProfiles() {
     $user = UserFactory::createOne(['roles' => [Roles::USER, Roles::ACTIVATED]]);
+    $profile = ProfileFactory::createOne(['user' => $user]);
     $this->browser()
-      ->actingAs($user)
-      ->post('api/profiles',[
-        'headers' => ['Content-Type' => 'application/json'],
-        'json' => [
-          'firstName' => 'first name',
-          'lastName' => 'last name',
-          'description' => 'sample description',
-        ],
+      ->get('api/profiles/' . $profile->getId(),[
+        'headers' => ['Content-Type' => 'application/json']
       ])
-      ->assertAuthenticated(as: $user)
-      ->assertStatus(Http::CREATED());
+      ->assertStatus(Http::OK());
   }
 
 

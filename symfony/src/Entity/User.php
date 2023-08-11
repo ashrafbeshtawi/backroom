@@ -90,7 +90,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface {
     private ?string $password = null;
 
     #[OneToOne(inversedBy: 'user', targetEntity: Profile::class, cascade: ["persist"])]
-    #[JoinColumn(nullable: false)]
     private Profile $profile;
 
   #[Groups(['read'])]
