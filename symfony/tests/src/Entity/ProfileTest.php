@@ -14,111 +14,37 @@ class ProfileTest extends KernelTestCase {
   use HasBrowser;
   use ResetDatabase;
 
-  private function createUser() {
-
-  }
-  public function testCreateUsers() {
+  public function testCreateProfilesWithoutLoginWillFail() {
     $this->browser()
-      ->post('api/users',[
+      ->post('api/profiles',[
         'headers' => ['Content-Type' => 'application/json'],
         'json' => [
-          'email' => 'test@test.com',
-          'password' => 'password123',
-        ],
-      ])
-      ->assertNotAuthenticated()
-      ->assertStatus(Http::CREATED());
-  }
-  public function testGetUsersWithoutLoginWillFailWithAccessDenied() {
-    $this->browser()
-      ->get('api/users')
-      ->assertNotAuthenticated()
-      ->assertStatus(Http::UNAUTHORIZED());
-  }
-
-  public function testGetUser() {
-    $user = UserFactory::createOne();
-    $this->browser()
-      ->actingAs($user)
-      ->get('api/users/'.$user->getId())
-      ->assertStatus(Http::OK());
-  }
-  public function testGetUsersWithoutAdminRoleWillFaill() {
-    $user = UserFactory::createOne();
-    $this->browser()
-      ->actingAs($user)
-      ->get('api/users')
-      ->assertStatus(Http::FORBIDDEN());
-  }
-  public function testGetUsersWithAdminRole() {
-    $user = UserFactory::createOne(['roles' => [Roles::ADMIN]]);
-    $this->browser()
-      ->actingAs($user)
-      ->get('api/users')
-      ->assertStatus(Http::OK());
-  }
-
-  public function testActivateUser() {
-    $user = UserFactory::createOne();
-    $secret = Hasher::generateActivationHash($user->getPassword());
-    $this->browser()
-      ->actingAs($user)
-      ->get('api/activate/'. $user->getId() . '/' . $secret)
-      ->assertStatus(Http::OK());
-
-    $this->browser()
-      ->actingAs($user)
-      ->get('api/users/' . $user->getId())
-      ->assertStatus(Http::OK())
-      ->assertJson()
-      ->assertJsonMatches('roles', [Roles::USER, Roles::ACTIVATED]);
-  }
-
-  public function testLoginUserWillFailDueToWrongPassword() {
-    $this->browser()
-      ->post('api/users',[
-        'headers' => ['Content-Type' => 'application/json'],
-        'json' => [
-          'email' => 'test@test.com',
-          'password' => 'password123',
-        ],
-      ])
-      ->assertNotAuthenticated()
-      ->assertStatus(Http::CREATED());
-
-    $this->browser()
-      ->post('api/login_check',[
-        'headers' => ['Content-Type' => 'application/json'],
-        'json' => [
-          'username' => 'test@test.com',
-          'password' => 'wrongpassword',
+          'firstName' => 'first name',
+          'lastName' => 'last name',
+          'description' => 'sample description',
         ],
       ])
       ->assertStatus(Http::UNAUTHORIZED());
   }
-  public function testLoginUser() {
+  public function testCreateProfiles() {
+    $user = UserFactory::createOne(['roles' => [Roles::USER, Roles::ACTIVATED]]);
     $this->browser()
-      ->post('api/users',[
+      ->actingAs($user)
+      ->post('api/profiles',[
         'headers' => ['Content-Type' => 'application/json'],
         'json' => [
-          'email' => 'test@test.com',
-          'password' => 'password123',
+          'firstName' => 'first name',
+          'lastName' => 'last name',
+          'description' => 'sample description',
         ],
       ])
-      ->assertNotAuthenticated()
+      ->dump()
+      ->assertAuthenticated(as: $user)
       ->assertStatus(Http::CREATED());
-
-    $this->browser()
-      ->post('api/login_check',[
-        'headers' => ['Content-Type' => 'application/json'],
-        'json' => [
-          'username' => 'test@test.com',
-          'password' => 'password123',
-        ],
-      ])
-      ->assertStatus(Http::OK())
-      ->assertJson();
   }
+
+
+
 
 
 }

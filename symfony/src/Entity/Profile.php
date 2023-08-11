@@ -22,12 +22,8 @@ use Doctrine\ORM\Mapping as ORM;
 #[ApiResource(
   operations: [
     new GetCollection(security: "is_granted('ROLE_ADMIN')"),
-    new Get(security: "is_granted('ROLE_ADMIN') or (is_granted('ROLE_ACTIVATED') and object.getUser().getId() == user.getId())"),
-    new Post(
-      security: "is_granted('ROLE_ACTIVATED') and is_granted('EDIT', object)",
-      processor: POSTProfileProcessor::class
-    ),
-    new Put(security: "is_granted('ROLE_ADMIN') or (is_granted('ROLE_ACTIVATED') and object.getUser().getId() == user.getId())"),
+    new Get(security: "is_granted('ROLE_ADMIN') or is_granted('PROFILE_VIEW', object)"),
+    new Put(security: "is_granted('ROLE_ADMIN') or is_granted('PROFILE_EDIT', object)"),
   ],
   normalizationContext: ['groups' => ['read']],
   denormalizationContext: ['groups' => ['write']]
@@ -45,7 +41,6 @@ class Profile {
 
   #[ORM\OneToOne(inversedBy: 'profile', targetEntity: User::class)]
   #[ORM\JoinColumn(nullable: false)]
-  #[Groups(['read', 'write'])]
   private User $user;
 
   /**

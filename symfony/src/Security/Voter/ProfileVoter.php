@@ -8,8 +8,8 @@ use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 class ProfileVoter extends Voter {
-    public const EDIT = 'EDIT';
-    public const VIEW = 'VIEW';
+    public const EDIT = 'PROFILE_EDIT';
+    public const VIEW = 'PROFILE_VIEW';
 
     protected function supports(string $attribute, mixed $subject): bool
     {

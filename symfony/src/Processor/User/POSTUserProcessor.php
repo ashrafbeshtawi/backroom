@@ -4,6 +4,7 @@ namespace App\Processor\User;
 
 use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProcessorInterface;
+use App\Entity\Profile;
 use App\Entity\User;
 use App\Security\Hasher;
 use Doctrine\ORM\EntityManagerInterface;
@@ -32,6 +33,9 @@ final class POSTUserProcessor implements ProcessorInterface
     );
     $data->setPassword($hashedPassword);
     $data->eraseCredentials();
+    $profile = new Profile();
+    $profile->setUser($data);
+    $data->setProfile($profile);
     $data->setRoles(['ROLE_USER']);
     $this->entityManager->persist($data);
     $this->entityManager->flush();
