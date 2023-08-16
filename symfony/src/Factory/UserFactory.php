@@ -2,6 +2,7 @@
 
 namespace App\Factory;
 
+use App\Entity\Profile;
 use App\Entity\User;
 use App\Repository\UserRepository;
 use App\Utils\Roles;
@@ -59,6 +60,7 @@ final class UserFactory extends ModelFactory
      */
     protected function initialize(): self
     {
+
         return $this
             // ->afterInstantiate(function(User $user): void {})
         ;

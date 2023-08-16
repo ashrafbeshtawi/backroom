@@ -3,6 +3,8 @@
 namespace App\Factory;
 
 use App\Entity\Profile;
+use App\Entity\User;
+use App\Utils\Roles;
 use Doctrine\ORM\EntityRepository;
 use Zenstruck\Foundry\ModelFactory;
 use Zenstruck\Foundry\Proxy;
