@@ -47,7 +47,7 @@ bin/console make:factory
 
 ## Run Fixtures
 ```bash
-php bin/console doctrine:fixtures:load
+bin/console doctrine:fixtures:load
 ```
 
 
