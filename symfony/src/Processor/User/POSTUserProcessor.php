@@ -6,6 +6,7 @@ use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProcessorInterface;
 use App\Entity\Profile;
 use App\Entity\User;
+use App\Repository\ThemeRepository;
 use App\Security\Hasher;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
@@ -18,7 +19,9 @@ final class POSTUserProcessor implements ProcessorInterface
   public function __construct(
     private readonly UserPasswordHasherInterface $passwordHasher,
     private readonly EntityManagerInterface $entityManager,
-    private readonly TransportInterface $mailer
+    private readonly TransportInterface $mailer,
+    private readonly ThemeRepository $themeRepository
+
   ) {
   }
 
@@ -33,8 +36,10 @@ final class POSTUserProcessor implements ProcessorInterface
     );
     $data->setPassword($hashedPassword);
     $data->eraseCredentials();
+    // Create Empty Profile
     $profile = new Profile();
     $profile->setUser($data);
+    $profile->setTheme($this->themeRepository->fetchDefaultTheme());
     $data->setProfile($profile);
     $data->setRoles(['ROLE_USER']);
     $this->entityManager->persist($data);

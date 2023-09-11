@@ -50,6 +50,7 @@ final class ProfileFactory extends ModelFactory
             'description' => self::faker()->text(),
             'firstName' => self::faker()->text(),
             'lastName' => self::faker()->text(),
+            'theme' => ThemeFactory::new(),
             'user' => UserFactory::new(),
         ];
     }

@@ -66,6 +66,10 @@ class Profile {
   #[Groups(['read', 'write'])]
   private string $description = '';
 
+  #[ORM\ManyToOne(inversedBy: 'profile')]
+  #[ORM\JoinColumn(nullable: false)]
+  private ?Theme $theme = null;
+
   /**
    * @return User
    */
@@ -135,6 +139,18 @@ class Profile {
    */
   public function setDescription(string $description): void {
     $this->description = $description;
+  }
+
+  public function getTheme(): ?Theme
+  {
+      return $this->theme;
+  }
+
+  public function setTheme(?Theme $theme): self
+  {
+      $this->theme = $theme;
+
+      return $this;
   }
 
 
