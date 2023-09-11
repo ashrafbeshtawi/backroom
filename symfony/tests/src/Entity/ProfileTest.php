@@ -2,13 +2,11 @@
 
 namespace App\Tests\src\Entity;
 
-use App\Entity\User;
 use App\Factory\ProfileFactory;
 use App\Factory\UserFactory;
 use App\Utils\Roles;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Zenstruck\Browser\Test\HasBrowser;
-use Zenstruck\Foundry\Proxy;
 use Zenstruck\Foundry\Test\ResetDatabase;
 use JustSteveKing\StatusCode\Http;
 
@@ -16,11 +14,12 @@ class ProfileTest extends KernelTestCase {
   use HasBrowser;
   use ResetDatabase;
 
-  public function testGetProfiles() {
-    $profile = ProfileFactory::createOne(['user' => UserFactory::new(['roles' => [Roles::ACTIVATED, Roles::USER]])]);
+  public function testGetProfile() {
+    $profile = ProfileFactory::createOne(['user' => UserFactory::createOne(['roles' => [Roles::ACTIVATED, Roles::USER]])]);
+    $user = $profile->getUser();
     $this->browser()
-      ->actingAs($profile->getUser())
-      ->get('api/profiles/' . $profile->getId(),[
+      ->actingAs($user)
+      ->get('api/profiles/' . $user->getId(),[
         'headers' => ['Content-Type' => 'application/json']
       ])
       ->assertStatus(Http::OK())
@@ -32,18 +31,39 @@ class ProfileTest extends KernelTestCase {
 
   public function testGetProfilesCollectionWillFailWithoutLogin() {
     $this->browser()
-      ->get('api/profiles/',[
+      ->get('api/profiles',[
         'headers' => ['Content-Type' => 'application/json']
       ])
       ->assertNotAuthenticated()
       ->assertStatus(Http::UNAUTHORIZED());
   }
   public function testGetProfilesCollectionWillFailWithoutPermission() {
-    $profile = ProfileFactory::createOne(['user' => UserFactory::new(['roles' => [Roles::ACTIVATED, Roles::USER]])]);
-
+    $user = UserFactory::createOne();
     $this->browser()
-      ->actingAs($profile->getUser())
-      ->get('api/profiles/',[
+      ->actingAs($user)
+      ->get('api/profiles',[
+        'headers' => ['Content-Type' => 'application/json']
+      ])
+      ->assertAuthenticated()
+      ->assertStatus(Http::FORBIDDEN());
+  }
+
+  public function testGetProfilesCollectionAsAdmin() {
+    $user = UserFactory::createOne(['roles' => [Roles::ACTIVATED, Roles::USER, Roles::ADMIN]]);
+    $this->browser()
+      ->actingAs($user)
+      ->get('api/profiles',[
+        'headers' => ['Content-Type' => 'application/json']
+      ])
+      ->assertAuthenticated()
+      ->assertStatus(Http::OK());
+  }
+
+  public function testGetProfilesCollectionAsNormalUserWillFail() {
+    $user = UserFactory::createOne(['roles' => [Roles::ACTIVATED, Roles::USER]]);
+    $this->browser()
+      ->actingAs($user)
+      ->get('api/profiles',[
         'headers' => ['Content-Type' => 'application/json']
       ])
       ->assertAuthenticated()

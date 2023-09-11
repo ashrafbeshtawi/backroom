@@ -2,7 +2,6 @@
 
 namespace App\Tests\src\Entity;
 
-use App\Entity\User;
 use App\Factory\UserFactory;
 use App\Security\Hasher;
 use App\Utils\Roles;
