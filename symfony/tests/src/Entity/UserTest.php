@@ -2,18 +2,37 @@
 
 namespace App\Tests\src\Entity;
 
+use App\Entity\User;
+use App\Factory\ProfileFactory;
 use App\Factory\UserFactory;
+use App\Repository\UserRepository;
 use App\Security\Hasher;
+use App\Tests\src\TestHelper;
 use App\Utils\Roles;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
+use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Zenstruck\Browser\Test\HasBrowser;
 use Zenstruck\Foundry\Test\ResetDatabase;
 use JustSteveKing\StatusCode\Http;
 
-class UserTest extends KernelTestCase {
+class UserTest extends WebTestCase {
   use HasBrowser;
   use ResetDatabase;
 
+
+  public function testGetWhoAmIWillFailWhenNotLoggedIn() {
+    $this->browser()
+      ->get('api/users/whoami/')
+      ->assertStatus(Http::INTERNAL_SERVER_ERROR());
+  }
+
+  public function testGetWhoAmI() {
+    $user = UserFactory::createOne();
+    $this->browser()
+      ->actingAs($user)
+      ->get('api/users/whoami/')
+      ->assertStatus(Http::OK());
+  }
 
   public function testCreateUsers() {
     $this->browser()
@@ -54,19 +73,6 @@ class UserTest extends KernelTestCase {
       ->actingAs($user)
       ->get('api/users')
       ->assertStatus(Http::OK());
-  }
-  public function testGetWhoAmIWillFailWhenNotLoggedIn() {
-    $this->browser()
-      ->get('api/users/whoami')
-      ->assertStatus(Http::INTERNAL_SERVER_ERROR());
-  }
-
-  public function testGetWhoAmI() {
-    $user = UserFactory::createOne();
-    $this->browser()
-      ->actingAs($user)
-      ->get('api/users/whoami')
-      ->assertStatus(Http::INTERNAL_SERVER_ERROR());
   }
 
   public function testActivateUser() {

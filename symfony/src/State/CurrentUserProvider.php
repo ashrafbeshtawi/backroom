@@ -4,13 +4,14 @@ namespace App\State;
 
 use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProviderInterface;
-use App\Entity\User;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Webmozart\Assert\Assert;
 
-class CurrentUserProvider implements ProviderInterface
-{
+class CurrentUserProvider implements ProviderInterface {
+
+  private static ?TokenInterface $token = null;
   public function __construct(
     private readonly TokenStorageInterface $tokenStorage
   ) {
@@ -26,8 +27,11 @@ class CurrentUserProvider implements ProviderInterface
    * @return UserInterface
    */
   public function provide(Operation $operation, array $uriVariables = [], array $context = []): UserInterface {
-    Assert::notNull($this->tokenStorage->getToken());
-    return $this->tokenStorage->getToken()->getUser();
+    if (!self::$token) {
+      self::$token = $this->tokenStorage->getToken();
+    }
+    Assert::notNull(self::$token);
+    return self::$token->getUser();
   }
 
 }

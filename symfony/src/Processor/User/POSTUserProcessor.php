@@ -21,7 +21,6 @@ final class POSTUserProcessor implements ProcessorInterface
     private readonly EntityManagerInterface $entityManager,
     private readonly TransportInterface $mailer,
     private readonly ThemeRepository $themeRepository
-
   ) {
   }
 
