@@ -44,7 +44,7 @@ class ThemeRepository extends ServiceEntityRepository
         $theme = new Theme();
         $theme->setName('basic');
         $theme->setDescription('Vanilla Style');
-        $theme->setPermium(false);
+        $theme->setPremium(false);
         $this->save($theme, true);
       }
       return $this->findOneBy(['name' => 'basic']);

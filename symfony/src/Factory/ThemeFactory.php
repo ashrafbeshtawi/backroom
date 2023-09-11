@@ -49,7 +49,7 @@ final class ThemeFactory extends ModelFactory
         return [
             'description' => self::faker()->text(1000),
             'name' => self::faker()->text(255),
-            'permium' => self::faker()->boolean(),
+            'premium' => self::faker()->boolean(),
         ];
     }
 

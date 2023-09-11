@@ -3,28 +3,49 @@
 namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Delete;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\Put;
+use ApiPlatform\Metadata\Tests\Fixtures\Metadata\Get;
 use App\Repository\ThemeRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: ThemeRepository::class)]
-#[ApiResource]
+#[ApiResource(
+  operations: [
+    new GetCollection(),
+    new Get(),
+    new Post(security: "is_granted('ROLE_ADMIN')"),
+    new Put(security: "is_granted('ROLE_ADMIN')"),
+    new Delete(security: "is_granted('ROLE_ADMIN')"),
+],
+  normalizationContext: ['groups' => ['read']],
+  denormalizationContext: ['groups' => ['write']]
+)
+]
 class Theme
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['read', 'write'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['read', 'write'])]
     private ?string $name = null;
 
     #[ORM\Column(length: 1000)]
+    #[Groups(['read', 'write'])]
     private ?string $description = null;
 
     #[ORM\Column]
-    private ?bool $permium = null;
+    #[Groups(['read', 'write'])]
+    private ?bool $premium = null;
 
     #[ORM\OneToMany(mappedBy: 'theme', targetEntity: Profile::class)]
     private Collection $profile;
@@ -63,14 +84,14 @@ class Theme
         return $this;
     }
 
-    public function isPermium(): ?bool
+    public function isPremium(): ?bool
     {
-        return $this->permium;
+        return $this->premium;
     }
 
-    public function setPermium(bool $permium): self
+    public function setPremium(bool $premium): self
     {
-        $this->permium = $permium;
+        $this->premium = $premium;
 
         return $this;
     }

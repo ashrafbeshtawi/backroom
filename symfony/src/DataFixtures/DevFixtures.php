@@ -24,7 +24,7 @@ class DevFixtures extends Fixture
     $theme = new Theme();
     $theme->setName('basic');
     $theme->setDescription('Vanilla Style');
-    $theme->setPermium(false);
+    $theme->setPremium(false);
     $manager->persist($theme);
 
     // create Admin
