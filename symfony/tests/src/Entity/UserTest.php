@@ -25,15 +25,6 @@ class UserTest extends WebTestCase {
       ->get('api/users/whoami/')
       ->assertStatus(Http::INTERNAL_SERVER_ERROR());
   }
-
-  public function testGetWhoAmI() {
-    $user = UserFactory::createOne();
-    $this->browser()
-      ->actingAs($user)
-      ->get('api/users/whoami/')
-      ->assertStatus(Http::OK());
-  }
-
   public function testCreateUsers() {
     $this->browser()
       ->post('api/users',[
@@ -52,45 +43,6 @@ class UserTest extends WebTestCase {
       ->assertNotAuthenticated()
       ->assertStatus(Http::UNAUTHORIZED());
   }
-
-  public function testGetUser() {
-    $user = UserFactory::createOne();
-    $this->browser()
-      ->actingAs($user)
-      ->get('api/users/'.$user->getId())
-      ->assertStatus(Http::OK());
-  }
-  public function testGetUsersWithoutAdminRoleWillFaill() {
-    $user = UserFactory::createOne();
-    $this->browser()
-      ->actingAs($user)
-      ->get('api/users')
-      ->assertStatus(Http::FORBIDDEN());
-  }
-  public function testGetUsersWithAdminRole() {
-    $user = UserFactory::createOne(['roles' => [Roles::ADMIN]]);
-    $this->browser()
-      ->actingAs($user)
-      ->get('api/users')
-      ->assertStatus(Http::OK());
-  }
-
-  public function testActivateUser() {
-    $user = UserFactory::createOne();
-    $secret = Hasher::generateActivationHash($user->getPassword());
-    $this->browser()
-      ->actingAs($user)
-      ->get('api/activate/'. $user->getId() . '/' . $secret)
-      ->assertStatus(Http::OK());
-
-    $this->browser()
-      ->actingAs($user)
-      ->get('api/users/' . $user->getId())
-      ->assertStatus(Http::OK())
-      ->assertJson()
-      ->assertJsonMatches('roles', [Roles::USER, Roles::ACTIVATED]);
-  }
-
   public function testLoginUserWillFailDueToWrongPassword() {
     $this->browser()
       ->post('api/users',[
@@ -136,6 +88,48 @@ class UserTest extends WebTestCase {
       ->assertStatus(Http::OK())
       ->assertJson();
   }
+  public function testGetWhoAmI() {
+    $user = UserFactory::createOne();
+    $this->browser()
+      ->actingAs($user)
+      ->get('api/users/whoami/')
+      ->assertStatus(Http::OK());
+  }
+  public function testGetUser() {
+    $user = UserFactory::createOne();
+    $this->browser()
+      ->actingAs($user)
+      ->get('api/users/'.$user->getId())
+      ->assertStatus(Http::OK());
+  }
+  public function testGetUsersWithoutAdminRoleWillFaill() {
+    $user = UserFactory::createOne();
+    $this->browser()
+      ->actingAs($user)
+      ->get('api/users')
+      ->assertStatus(Http::FORBIDDEN());
+  }
+  public function testGetUsersWithAdminRole() {
+    $user = UserFactory::createOne(['roles' => [Roles::ADMIN]]);
+    $this->browser()
+      ->actingAs($user)
+      ->get('api/users')
+      ->assertStatus(Http::OK());
+  }
+  public function testActivateUser() {
+    $user = UserFactory::createOne();
+    $secret = Hasher::generateActivationHash($user->getPassword());
+    $this->browser()
+      ->actingAs($user)
+      ->get('api/activate/'. $user->getId() . '/' . $secret)
+      ->assertStatus(Http::OK());
 
+    $this->browser()
+      ->actingAs($user)
+      ->get('api/users/' . $user->getId())
+      ->assertStatus(Http::OK())
+      ->assertJson()
+      ->assertJsonMatches('roles', [Roles::USER, Roles::ACTIVATED]);
+  }
 
 }
