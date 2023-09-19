@@ -11,7 +11,6 @@ use Webmozart\Assert\Assert;
 
 class CurrentUserProvider implements ProviderInterface {
 
-  private static ?TokenInterface $token = null;
   public function __construct(
     private readonly TokenStorageInterface $tokenStorage
   ) {
@@ -24,14 +23,11 @@ class CurrentUserProvider implements ProviderInterface {
    * @param Operation $operation
    * @param array $uriVariables
    * @param array $context
-   * @return UserInterface
+   * @return UserInterface|null
    */
-  public function provide(Operation $operation, array $uriVariables = [], array $context = []): UserInterface {
-    if (!self::$token) {
-      self::$token = $this->tokenStorage->getToken();
-    }
-    Assert::notNull(self::$token);
-    return self::$token->getUser();
+  public function provide(Operation $operation, array $uriVariables = [], array $context = []): ?UserInterface {
+    $token = $this->tokenStorage->getToken();
+    return $token?->getUser();
   }
 
 }

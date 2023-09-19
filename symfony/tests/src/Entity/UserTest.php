@@ -20,10 +20,18 @@ class UserTest extends WebTestCase {
   use ResetDatabase;
 
 
+  public function testGetWhoAmI() {
+    $user = UserFactory::createOne();
+    $this->browser()
+      ->actingAs($user)
+      ->get('api/users/whoami/')
+      ->assertStatus(Http::OK());
+  }
+
   public function testGetWhoAmIWillFailWhenNotLoggedIn() {
     $this->browser()
       ->get('api/users/whoami/')
-      ->assertStatus(Http::INTERNAL_SERVER_ERROR());
+      ->assertStatus(Http::NOT_FOUND());
   }
   public function testCreateUsers() {
     $this->browser()
@@ -87,13 +95,6 @@ class UserTest extends WebTestCase {
       ])
       ->assertStatus(Http::OK())
       ->assertJson();
-  }
-  public function testGetWhoAmI() {
-    $user = UserFactory::createOne();
-    $this->browser()
-      ->actingAs($user)
-      ->get('api/users/whoami/')
-      ->assertStatus(Http::OK());
   }
   public function testGetUser() {
     $user = UserFactory::createOne();
