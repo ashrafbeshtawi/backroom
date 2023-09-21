@@ -2,14 +2,10 @@
 
 namespace App\Tests\src\Entity;
 
-use App\Entity\User;
-use App\Factory\ProfileFactory;
 use App\Factory\UserFactory;
-use App\Repository\UserRepository;
 use App\Security\Hasher;
 use App\Tests\src\TestHelper;
 use App\Utils\Roles;
-use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Zenstruck\Browser\Test\HasBrowser;
 use Zenstruck\Foundry\Test\ResetDatabase;
