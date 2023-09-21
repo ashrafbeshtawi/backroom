@@ -14,6 +14,15 @@ class ProfileTest extends KernelTestCase {
   use HasBrowser;
   use ResetDatabase;
 
+  public function testGetProfilesCollectionWillFailWithoutLogin() {
+    $this->browser()
+      ->get('api/profiles',[
+        'headers' => ['Content-Type' => 'application/json']
+      ])
+      ->assertNotAuthenticated()
+      ->assertStatus(Http::UNAUTHORIZED());
+  }
+
   public function testGetProfilesCollectionWillFailWithoutPermission() {
     $user = UserFactory::createOne();
     $this->browser()
@@ -61,21 +70,5 @@ class ProfileTest extends KernelTestCase {
       ->assertJsonMatches('lastName', $profile->getLastName())
       ->assertJsonMatches('description', $profile->getDescription());
   }
-
-  public function testGetProfilesCollectionWillFailWithoutLogin() {
-    $this->browser()
-      ->get('api/profiles',[
-        'headers' => ['Content-Type' => 'application/json']
-      ])
-      ->assertNotAuthenticated()
-      ->assertStatus(Http::UNAUTHORIZED());
-  }
-
-
-
-
-
-
-
 
 }

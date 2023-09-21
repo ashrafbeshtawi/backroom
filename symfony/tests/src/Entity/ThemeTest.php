@@ -2,10 +2,7 @@
 
 namespace App\Tests\src\Entity;
 
-use App\Factory\ProfileFactory;
 use App\Factory\ThemeFactory;
-use App\Factory\UserFactory;
-use App\Utils\Roles;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Zenstruck\Browser\Test\HasBrowser;
 use Zenstruck\Foundry\Test\ResetDatabase;
