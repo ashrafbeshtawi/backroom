@@ -38,7 +38,6 @@ class ProfileVoter extends Voter {
       // Edit is possible if caller own the profile
       } else {
         return $loggedInUser && $userFromEntity && $loggedInUser->getId() === $userFromEntity->getId();
-
       }
     }
 }

@@ -5,6 +5,7 @@ namespace App\Tests\src\Entity;
 use App\Factory\ProfileFactory;
 use App\Factory\UserFactory;
 use App\Utils\Roles;
+use Zenstruck\Browser\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Zenstruck\Browser\Test\HasBrowser;
 use Zenstruck\Foundry\Test\ResetDatabase;
@@ -14,7 +15,7 @@ class ProfileTest extends KernelTestCase {
   use HasBrowser;
   use ResetDatabase;
 
-  public function testGetProfilesCollectionWillFailWithoutLogin() {
+  public function testGetProfilesCollectionWillFailNotLoggedIn() {
     $this->browser()
       ->get('api/profiles',[
         'headers' => ['Content-Type' => 'application/json']
@@ -23,8 +24,8 @@ class ProfileTest extends KernelTestCase {
       ->assertStatus(Http::UNAUTHORIZED());
   }
 
-  public function testGetProfilesCollectionWillFailWithoutPermission() {
-    $user = UserFactory::createOne();
+  public function testGetProfilesCollectionAsNormalUserWillFail() {
+    $user = UserFactory::createOne(['roles' => [Roles::ACTIVATED, Roles::USER]]);
     $this->browser()
       ->actingAs($user)
       ->get('api/profiles',[
@@ -45,30 +46,48 @@ class ProfileTest extends KernelTestCase {
       ->assertStatus(Http::OK());
   }
 
-  public function testGetProfilesCollectionAsNormalUserWillFail() {
-    $user = UserFactory::createOne(['roles' => [Roles::ACTIVATED, Roles::USER]]);
-    $this->browser()
-      ->actingAs($user)
-      ->get('api/profiles',[
+  public function testGetProfileNotLoggedIn() {
+    $profile = ProfileFactory::createOne(['user' => UserFactory::new(['roles' => [Roles::ACTIVATED, Roles::USER]])]);
+    $browser = $this->browser()
+      ->get('api/profiles/' . $profile->getId(),[
         'headers' => ['Content-Type' => 'application/json']
       ])
-      ->assertAuthenticated()
-      ->assertStatus(Http::FORBIDDEN());
+      ->assertStatus(Http::OK());
+    $this->checkProfile($browser, $profile);
   }
-
-  public function testGetProfile() {
-    $profile = ProfileFactory::createOne(['user' => UserFactory::createOne(['roles' => [Roles::ACTIVATED, Roles::USER]])]);
+  public function testGetOwnProfile() {
+    $profile = ProfileFactory::createOne(['user' => UserFactory::new(['roles' => [Roles::ACTIVATED, Roles::USER]])]);
     $user = $profile->getUser();
-    $this->browser()
+    $browser = $this->browser()
       ->actingAs($user)
-      ->get('api/profiles/' . $user->getId(),[
+      ->get('api/profiles/' . $profile->getId(),[
         'headers' => ['Content-Type' => 'application/json']
       ])
-      ->assertStatus(Http::OK())
-      ->assertJsonMatches('id', $profile->getId())
-      ->assertJsonMatches('firstName', $profile->getFirstName())
-      ->assertJsonMatches('lastName', $profile->getLastName())
-      ->assertJsonMatches('description', $profile->getDescription());
+      ->assertStatus(Http::OK());
+    $this->checkProfile($browser, $profile);
+
+  }
+  public function testGetProfileOfOtherUser() {
+    $profile1 = ProfileFactory::createOne();
+    $profile2 = ProfileFactory::createOne(['user' => UserFactory::new(['roles' => [Roles::ACTIVATED, Roles::USER]])]);
+    $user1 = $profile1->getUser();
+    $browser = $this->browser()
+      ->actingAs($user1)
+      ->get('api/profiles/' . $profile2->getId(),[
+        'headers' => ['Content-Type' => 'application/json']
+      ]);
+    $this->checkProfile($browser, $profile2);
   }
 
+
+  private function checkProfile(KernelBrowser $browser, $refrenceProfile) {
+    $browser->assertJsonMatches('id', $refrenceProfile->getId())
+      ->assertJsonMatches('firstName', $refrenceProfile->getFirstName())
+      ->assertJsonMatches('lastName', $refrenceProfile->getLastName())
+      ->assertJsonMatches('description', $refrenceProfile->getDescription())
+      ->assertJsonMatches('theme.id', $refrenceProfile->getTheme()->getId())
+      ->assertJsonMatches('theme.name', $refrenceProfile->getTheme()->getName())
+      ->assertJsonMatches('theme.description', $refrenceProfile->getTheme()->getDescription())
+      ->assertJsonMatches('theme.premium', $refrenceProfile->getTheme()->isPremium());
+  }
 }

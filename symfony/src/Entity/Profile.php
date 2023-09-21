@@ -68,6 +68,7 @@ class Profile {
 
   #[ORM\ManyToOne(inversedBy: 'profile')]
   #[ORM\JoinColumn(nullable: false)]
+  #[Groups(['read', 'write'])]
   private ?Theme $theme = null;
 
   /**
