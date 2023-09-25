@@ -2,11 +2,12 @@
 
 namespace App\Tests\src\Entity;
 
+use App\Entity\User;
 use App\Factory\UserFactory;
 use App\Security\Hasher;
-use App\Tests\src\TestHelper;
 use App\Utils\Roles;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Zenstruck\Browser\KernelBrowser;
 use Zenstruck\Browser\Test\HasBrowser;
 use Zenstruck\Foundry\Test\ResetDatabase;
 use JustSteveKing\StatusCode\Http;
@@ -94,10 +95,11 @@ class UserTest extends WebTestCase {
   }
   public function testGetUser() {
     $user = UserFactory::createOne();
-    $this->browser()
+    $browser = $this->browser()
       ->actingAs($user)
       ->get('api/users/'.$user->getId())
       ->assertStatus(Http::OK());
+    $this->checkUser($browser, $user->object());
   }
   public function testGetUsersWithoutAdminRoleWillFaill() {
     $user = UserFactory::createOne();
@@ -121,12 +123,25 @@ class UserTest extends WebTestCase {
       ->get('api/activate/'. $user->getId() . '/' . $secret)
       ->assertStatus(Http::OK());
 
-    $this->browser()
+    $browser = $this->browser()
       ->actingAs($user)
       ->get('api/users/' . $user->getId())
-      ->assertStatus(Http::OK())
-      ->assertJson()
-      ->assertJsonMatches('roles', [Roles::USER, Roles::ACTIVATED]);
+      ->assertStatus(Http::OK());
+
+    $userObject = $user->object();
+    // Mark reference User as activated
+    $userObject->setRoles([Roles::USER, Roles::ACTIVATED]);
+    $this->checkUser($browser, $userObject);
   }
 
+  /**
+   * @param KernelBrowser $browser
+   * @param User $refrenceUser
+   * @return void
+   */
+  private function checkUser(KernelBrowser $browser, User $refrenceUser) {
+    $browser->assertJsonMatches('id', $refrenceUser->getId())
+      ->assertJsonMatches('email', $refrenceUser->getEmail())
+      ->assertJsonMatches('roles', $refrenceUser->getRoles());
+  }
 }

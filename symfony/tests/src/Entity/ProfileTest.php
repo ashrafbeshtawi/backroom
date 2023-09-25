@@ -2,6 +2,7 @@
 
 namespace App\Tests\src\Entity;
 
+use App\Entity\Profile;
 use App\Factory\ProfileFactory;
 use App\Factory\UserFactory;
 use App\Utils\Roles;
@@ -53,7 +54,7 @@ class ProfileTest extends KernelTestCase {
         'headers' => ['Content-Type' => 'application/json']
       ])
       ->assertStatus(Http::OK());
-    $this->checkProfile($browser, $profile);
+    $this->checkProfile($browser, $profile->object());
   }
   public function testGetOwnProfile() {
     $profile = ProfileFactory::createOne(['user' => UserFactory::new(['roles' => [Roles::ACTIVATED, Roles::USER]])]);
@@ -64,7 +65,7 @@ class ProfileTest extends KernelTestCase {
         'headers' => ['Content-Type' => 'application/json']
       ])
       ->assertStatus(Http::OK());
-    $this->checkProfile($browser, $profile);
+    $this->checkProfile($browser, $profile->object());
 
   }
   public function testGetProfileOfOtherUser() {
@@ -76,11 +77,11 @@ class ProfileTest extends KernelTestCase {
       ->get('api/profiles/' . $profile2->getId(),[
         'headers' => ['Content-Type' => 'application/json']
       ]);
-    $this->checkProfile($browser, $profile2);
+    $this->checkProfile($browser, $profile2->object());
   }
 
 
-  private function checkProfile(KernelBrowser $browser, $refrenceProfile) {
+  private function checkProfile(KernelBrowser $browser, Profile $refrenceProfile) {
     $browser->assertJsonMatches('id', $refrenceProfile->getId())
       ->assertJsonMatches('firstName', $refrenceProfile->getFirstName())
       ->assertJsonMatches('lastName', $refrenceProfile->getLastName())
