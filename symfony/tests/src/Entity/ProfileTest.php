@@ -4,6 +4,7 @@ namespace App\Tests\src\Entity;
 
 use App\Entity\Profile;
 use App\Factory\ProfileFactory;
+use App\Factory\ThemeFactory;
 use App\Factory\UserFactory;
 use App\Utils\Roles;
 use Zenstruck\Browser\KernelBrowser;
@@ -80,7 +81,91 @@ class ProfileTest extends KernelTestCase {
     $this->checkProfile($browser, $profile2->object());
   }
 
-
+  public function testPutOwnProfile() {
+    $theme = ThemeFactory::createOne(['name' => 'changedThemeName', 'description' => 'changedThemeDescription', 'premium' => true]);
+    $profile = ProfileFactory::createOne(
+      ['user' => UserFactory::new(['roles' => [Roles::ACTIVATED, Roles::USER]])]
+    );
+    $user = $profile->getUser();
+    $refrenceValues = [
+      'firstName' => 'changedFirstName',
+      'lastName' => 'changedLastName',
+      'description' => 'changedDescription',
+      'theme.name' => $theme->getName(),
+      'theme.description' => $theme->getDescription(),
+      'theme.premium' => $theme->isPremium(),
+    ];
+    $browser = $this->browser()
+      ->actingAs($user)
+      ->put('api/profiles/' . $profile->getId(),[
+        'headers' => ['Content-Type' => 'application/json'],
+        'json' => [
+          'firstName' => $refrenceValues['firstName'],
+          'lastName' => $refrenceValues['lastName'],
+          'description' => $refrenceValues['description'],
+          'theme' => ['id' => $theme->getId()],
+        ],
+      ])
+      ->assertAuthenticated()
+      ->assertStatus(Http::OK());
+    $this->checkProfileAgainstValues($browser, $refrenceValues);
+  }
+  public function testPutProfileWillFailNotLoggedIn() {
+    $profile = ProfileFactory::createOne(
+      ['user' => UserFactory::new(['roles' => [Roles::ACTIVATED, Roles::USER]])]
+    );
+    $this->browser()
+      ->put('api/profiles/' . $profile->getId(),[
+        'headers' => ['Content-Type' => 'application/json'],
+        'json' => [
+          'firstName' => 'firstName',
+        ],
+      ])
+      ->assertNotAuthenticated()
+      ->assertStatus(Http::UNAUTHORIZED());
+  }
+  public function testPutProfileWillFailNotOwnProfile() {
+    $profile = ProfileFactory::createOne(
+      ['user' => UserFactory::new(['roles' => [Roles::ACTIVATED, Roles::USER]])]
+    );
+    $user = UserFactory::createOne();
+    $this->browser()
+      ->actingAs($user)
+      ->put('api/profiles/' . $profile->getId(),[
+        'headers' => ['Content-Type' => 'application/json'],
+        'json' => [
+          'firstName' => 'firstName',
+        ],
+      ])
+      ->assertStatus(Http::FORBIDDEN());
+  }
+  public function testPutOwnProfileAsAdmin() {
+    $theme = ThemeFactory::createOne(['name' => 'changedThemeName', 'description' => 'changedThemeDescription', 'premium' => true]);
+    $profile = ProfileFactory::createOne();
+    $user = UserFactory::createOne(['roles' => [Roles::ACTIVATED, Roles::USER, Roles::ADMIN]]);
+    $refrenceValues = [
+      'firstName' => 'changedFirstName',
+      'lastName' => 'changedLastName',
+      'description' => 'changedDescription',
+      'theme.name' => $theme->getName(),
+      'theme.description' => $theme->getDescription(),
+      'theme.premium' => $theme->isPremium(),
+    ];
+    $browser = $this->browser()
+      ->actingAs($user)
+      ->put('api/profiles/' . $profile->getId(),[
+        'headers' => ['Content-Type' => 'application/json'],
+        'json' => [
+          'firstName' => $refrenceValues['firstName'],
+          'lastName' => $refrenceValues['lastName'],
+          'description' => $refrenceValues['description'],
+          'theme' => ['id' => $theme->getId()],
+        ],
+      ])
+      ->assertAuthenticated()
+      ->assertStatus(Http::OK());
+    $this->checkProfileAgainstValues($browser, $refrenceValues);
+  }
   private function checkProfile(KernelBrowser $browser, Profile $refrenceProfile) {
     $browser->assertJsonMatches('id', $refrenceProfile->getId())
       ->assertJsonMatches('firstName', $refrenceProfile->getFirstName())
@@ -90,5 +175,10 @@ class ProfileTest extends KernelTestCase {
       ->assertJsonMatches('theme.name', $refrenceProfile->getTheme()->getName())
       ->assertJsonMatches('theme.description', $refrenceProfile->getTheme()->getDescription())
       ->assertJsonMatches('theme.premium', $refrenceProfile->getTheme()->isPremium());
+  }
+  private function checkProfileAgainstValues(KernelBrowser $browser, array $refrenceValues) {
+    foreach ($refrenceValues as $key => $value) {
+      $browser = $browser->assertJsonMatches($key, $value);
+    }
   }
 }
