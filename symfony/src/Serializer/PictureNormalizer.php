@@ -3,13 +3,13 @@
 
 namespace App\Serializer;
 
-use App\Entity\ProfilePicture;
+use App\Entity\Picture;
 use Symfony\Component\Serializer\Normalizer\ContextAwareNormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerAwareInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerAwareTrait;
 use Vich\UploaderBundle\Storage\StorageInterface;
 
-final class ProfilePictureNormalizer implements ContextAwareNormalizerInterface, NormalizerAwareInterface
+final class PictureNormalizer implements ContextAwareNormalizerInterface, NormalizerAwareInterface
 {
   use NormalizerAwareTrait;
 
@@ -34,6 +34,6 @@ final class ProfilePictureNormalizer implements ContextAwareNormalizerInterface,
       return false;
     }
 
-    return $data instanceof ProfilePicture;
+    return $data instanceof Picture;
   }
 }

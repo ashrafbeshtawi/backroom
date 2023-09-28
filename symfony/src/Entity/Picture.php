@@ -35,7 +35,10 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
                   'file' => [
                     'type' => 'string',
                     'format' => 'binary'
-                  ]
+                  ],
+                  'title' => [
+                    'type' => 'string',
+                  ],
                 ]
               ]
             ]
@@ -43,17 +46,20 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
         )
       ),
       validationContext: ['groups' => ['Default', 'media_object_create']],
-      deserialize: false
+      deserialize: false,
     )
   ],
-  normalizationContext: ['groups' => ['media_object:read']]
+  normalizationContext: ['groups' => ['read']]
 )]
-class ProfilePicture {
+class Picture {
+  public const UPLOAD_DESTINATION = '../media/uploaded/';
+  public const ALLOWED_TITELS = [self::PROFILE];
+  public const PROFILE = 'profile';
   #[ORM\Id, ORM\Column, ORM\GeneratedValue]
   private ?int $id = null;
 
   #[ApiProperty(types: ['https://schema.org/contentUrl'])]
-  #[Groups(['media_object:read'])]
+  #[Groups(['read'])]
   public ?string $contentUrl = null;
 
   #[Vich\UploadableField(mapping: "media_object", fileNameProperty: "filePath")]
@@ -63,7 +69,63 @@ class ProfilePicture {
   #[ORM\Column(nullable: true)]
   public ?string $filePath = null;
 
+  #[ORM\ManyToOne(inversedBy: 'picture')]
+  #[ORM\JoinColumn(nullable: false)]
+  private ?Profile $profile = null;
+
+  #[ORM\Column(nullable: true)]
+  #[Assert\NotNull]
+  #[Assert\NotBlank]
+  #[Groups(['read'])]
+  public ?string $title = null;
+
   public function getId(): ?int {
     return $this->id;
   }
+
+  #[Groups(['read'])]
+  public function getProfileId(): ?int {
+    return $this->profile->getId();
+  }
+  public function getProfile(): ?Profile {
+    return $this->profile;
+  }
+
+  public function setProfile(?Profile $profile): self {
+    $this->profile = $profile;
+    return $this;
+  }
+
+  /**
+   * @return string|null
+   */
+  public function getTitle(): ?string {
+    return $this->title;
+  }
+
+  /**
+   * @param string|null $title
+   */
+  public function setTitle(?string $title): void {
+    $this->title = $title;
+  }
+
+  /**
+   * @return string|null
+   */
+  public function getFilePath(): ?string
+  {
+    return $this->filePath;
+  }
+
+  /**
+   * @param string|null $filePath
+   */
+  public function setFilePath(?string $filePath): void
+  {
+    $this->filePath = $filePath;
+  }
+
+
+
 }

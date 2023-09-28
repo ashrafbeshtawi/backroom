@@ -5,6 +5,7 @@ use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Put;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;
@@ -68,6 +69,9 @@ class Profile {
   #[ORM\JoinColumn(nullable: false)]
   #[Groups(['read', 'write'])]
   private ?Theme $theme = null;
+
+  #[ORM\OneToMany(mappedBy: 'profile', targetEntity: Picture::class)]
+  private Collection $picture;
 
   /**
    * @return User
@@ -152,5 +156,32 @@ class Profile {
       return $this;
   }
 
+  /**
+   * @return Collection<int, Picture>
+   */
+  public function getPicture(): Collection
+  {
+    return $this->picture;
+  }
+
+  public function addPicture(Picture $picture): self
+  {
+    if (!$this->picture->contains($picture)) {
+      $this->picture->add($picture);
+      $picture->setProfile($this);
+    }
+    return $this;
+  }
+
+  public function removePicture(Picture $picture): self
+  {
+    if ($this->picture->removeElement($picture)) {
+      // set the owning side to null (unless already changed)
+      if ($picture->getProfile() === $this) {
+        $picture->setProfile(null);
+      }
+    }
+    return $this;
+  }
 
 }
