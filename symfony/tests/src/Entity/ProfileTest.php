@@ -166,6 +166,42 @@ class ProfileTest extends KernelTestCase {
       ->assertStatus(Http::OK());
     $this->checkProfileAgainstValues($browser, $refrenceValues);
   }
+  public function testPutShareSameTheme() {
+    $theme = ThemeFactory::createOne();
+    $profile1 = ProfileFactory::createOne();
+    $profile2 = ProfileFactory::createOne();
+    $refrenceValues = [
+      'theme.name' => $theme->getName(),
+      'theme.description' => $theme->getDescription(),
+      'theme.premium' => $theme->isPremium(),
+    ];
+    $browser1 = $this->browser()
+      ->actingAs($profile1->getUser())
+      ->put('api/profiles/' . $profile1->getId(),[
+        'headers' => ['Content-Type' => 'application/json'],
+        'json' => [
+          'theme' => ['id' => $theme->getId()],
+        ],
+      ])
+      ->assertAuthenticated()
+      ->assertStatus(Http::OK());
+
+    $browser2 = $this->browser()
+      ->actingAs($profile2->getUser())
+      ->put('api/profiles/' . $profile2->getId(),[
+        'headers' => ['Content-Type' => 'application/json'],
+        'json' => [
+          'theme' => ['id' => $theme->getId()],
+        ],
+      ])
+      ->assertAuthenticated()
+      ->assertStatus(Http::OK());
+
+    $this->checkProfileAgainstValues($browser1, $refrenceValues);
+    $this->checkProfileAgainstValues($browser2, $refrenceValues);
+
+  }
+
   private function checkProfile(KernelBrowser $browser, Profile $refrenceProfile) {
     $browser->assertJsonMatches('id', $refrenceProfile->getId())
       ->assertJsonMatches('firstName', $refrenceProfile->getFirstName())
