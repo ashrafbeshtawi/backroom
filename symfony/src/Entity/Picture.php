@@ -15,7 +15,7 @@ use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
-
+// TODO: Create Delete operation :)
 #[Vich\Uploadable]
 #[ORM\Entity]
 #[ApiResource(
@@ -36,7 +36,7 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
                     'type' => 'string',
                     'format' => 'binary'
                   ],
-                  'title' => [
+                  'pictureType' => [
                     'type' => 'string',
                   ],
                 ]
@@ -53,8 +53,6 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
 )]
 class Picture {
   public const UPLOAD_DESTINATION = '../media/uploaded/';
-  public const ALLOWED_TITELS = [self::PROFILE];
-  public const PROFILE = 'profile';
   #[ORM\Id, ORM\Column, ORM\GeneratedValue]
   private ?int $id = null;
 
@@ -73,11 +71,10 @@ class Picture {
   #[ORM\JoinColumn(nullable: false)]
   private ?Profile $profile = null;
 
-  #[ORM\Column(nullable: true)]
-  #[Assert\NotNull]
-  #[Assert\NotBlank]
-  #[Groups(['read'])]
-  public ?string $title = null;
+  #[ORM\ManyToOne(inversedBy: 'pictures')]
+  #[ORM\JoinColumn(nullable: false)]
+  #[Groups(['read', 'write'])]
+  private ?PictureType $pictureType = null;
 
   public function getId(): ?int {
     return $this->id;
@@ -99,20 +96,6 @@ class Picture {
   /**
    * @return string|null
    */
-  public function getTitle(): ?string {
-    return $this->title;
-  }
-
-  /**
-   * @param string|null $title
-   */
-  public function setTitle(?string $title): void {
-    $this->title = $title;
-  }
-
-  /**
-   * @return string|null
-   */
   public function getFilePath(): ?string
   {
     return $this->filePath;
@@ -124,6 +107,18 @@ class Picture {
   public function setFilePath(?string $filePath): void
   {
     $this->filePath = $filePath;
+  }
+
+  public function getPictureType(): ?PictureType
+  {
+      return $this->pictureType;
+  }
+
+  public function setPictureType(?PictureType $pictureType): self
+  {
+      $this->pictureType = $pictureType;
+
+      return $this;
   }
 
 

@@ -10,7 +10,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20230911224147 extends AbstractMigration
+final class Version20231002212900 extends AbstractMigration
 {
     public function getDescription(): string
     {
@@ -20,13 +20,13 @@ final class Version20230911224147 extends AbstractMigration
     public function up(Schema $schema): void
     {
         // this up() migration is auto-generated, please modify it to your needs
-        $this->addSql('ALTER TABLE theme RENAME COLUMN permium TO premium');
+        $this->addSql('CREATE UNIQUE INDEX UNIQ_333ED2BC5E237E06 ON picture_type (name)');
     }
 
     public function down(Schema $schema): void
     {
         // this down() migration is auto-generated, please modify it to your needs
         $this->addSql('CREATE SCHEMA public');
-        $this->addSql('ALTER TABLE theme RENAME COLUMN premium TO permium');
+        $this->addSql('DROP INDEX UNIQ_333ED2BC5E237E06');
     }
 }

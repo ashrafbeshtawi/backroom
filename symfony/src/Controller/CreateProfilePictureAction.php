@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Picture;
+use App\Entity\PictureType;
 use App\Entity\Profile;
 use App\Utils\Roles;
 use Doctrine\ORM\EntityManagerInterface;
@@ -34,25 +35,42 @@ final class CreateProfilePictureAction extends AbstractController {
     }
     $roles = $user->getRoles();
     $uploadedFile = $request->files->get('file');
-    $title = $request->request->get('title');
     $profile = $this->entityManager->getRepository(Profile::class)->findOneBy(['user' => $user]);
+    $requestedPictureType = $request->request->get('pictureType');
+    /** @var PictureType $registeredPictureType */
+    $registeredPictureType = $this->entityManager->getRepository(PictureType::class)->findOneBy(['name' => $requestedPictureType]);
     if (
       !$uploadedFile
-      || !$title
-      || !in_array($title, Picture::ALLOWED_TITELS, true)
+      || !$requestedPictureType
+      || !$registeredPictureType
+      || $registeredPictureType->getName() !== $requestedPictureType
       || !$roles
       || !in_array(Roles::ACTIVATED, $roles, true)
       || !$profile
     ) {
-      throw new BadRequestHttpException('file and title is required and account must be activated');
+      throw new BadRequestHttpException('file and Picture-Type are required and account must be activated');
     }
-    // If image of the same title for this profile is there then replace it
-    // TODO: Add column to allow having more than one picture of each title
+    // If max allowed number of this picture type is already uploaded,
+    // then return error
     /** @var Picture $picture */
     $pictures = $this->entityManager->getRepository(Picture::class)->findBy([
-      'title' => $title,
+      'pictureType' => $registeredPictureType,
       'profile' => $profile
     ]);
+    if (
+      !$registeredPictureType->isLimitedNumber()
+      || (
+        $registeredPictureType->getMaxNumber() > 0
+        && count($pictures) < $registeredPictureType->getMaxNumber()
+      )
+    ) {
+      $picture = new Picture();
+      $picture->file = $uploadedFile;
+      $picture->setPictureType($registeredPictureType);
+      $picture->setProfile($profile);
+      return $picture;
+    }
+    throw new BadRequestHttpException('Max Number of Images already reached');
     foreach ($pictures as $picture) {
       $fs = new Filesystem();
       if ($fs->exists(Picture::UPLOAD_DESTINATION . $picture->getFilePath())) {
@@ -61,12 +79,6 @@ final class CreateProfilePictureAction extends AbstractController {
       $this->entityManager->remove($picture);
     }
     $this->entityManager->flush();
-
-    $picture = new Picture();
-    $picture->file = $uploadedFile;
-    $picture->setTitle($title);
-    $picture->setProfile($profile);
-    return $picture;
   }
 
   #[Route(path: 'image/{img}', name: 'image', methods: ['GET'])]
