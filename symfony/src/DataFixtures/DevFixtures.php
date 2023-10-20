@@ -28,8 +28,8 @@ class DevFixtures extends Fixture
     $manager->persist($theme);
 
     // create Admin
-    $user->setEmail('admin@admin.com');
-    $user->setPassword($this->passwordHasher->hashPassword($user, 'strongPassword'));
+    $user->setEmail(getenv('ADMIN_EMAIL'));
+    $user->setPassword($this->passwordHasher->hashPassword($user, getenv('ADMIN_PASSWORD')));
     $user->setRoles([Roles::USER, Roles::ACTIVATED, Roles::ADMIN]);
     $manager->persist($user);
     $manager->flush();
@@ -37,8 +37,8 @@ class DevFixtures extends Fixture
 
 
     // Create Profile of Admin
-    $profile->setFirstName('Ashraf');
-    $profile->setLastName('Beshtawi');
+    $profile->setFirstName(getenv('ADMIN_NAME'));
+    $profile->setLastName(getenv('ADMIN_LASTNAME'));
     $profile->setDescription('Your lovely Admin');
     $profile->setTheme($theme);
     $profile->setUser($user);
