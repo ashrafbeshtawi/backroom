@@ -5,17 +5,13 @@ namespace App\Controller;
 use App\Entity\Picture;
 use App\Entity\PictureType;
 use App\Entity\Profile;
-use App\Utils\Roles;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
-use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpKernel\Attribute\AsController;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
-use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
@@ -30,10 +26,6 @@ final class CreateProfilePictureAction extends AbstractController {
   }
   public function __invoke(Request $request): Picture {
     $user = $this->tokenStorage->getToken()?->getUser();
-    if (!$user) {
-      throw new UnauthorizedHttpException('You must login first');
-    }
-    $roles = $user->getRoles();
     $uploadedFile = $request->files->get('file');
     $profile = $this->entityManager->getRepository(Profile::class)->findOneBy(['user' => $user]);
     $requestedPictureType = $request->request->get('pictureType');
@@ -44,8 +36,6 @@ final class CreateProfilePictureAction extends AbstractController {
       || !$requestedPictureType
       || !$registeredPictureType
       || $registeredPictureType->getName() !== $requestedPictureType
-      || !$roles
-      || !in_array(Roles::ACTIVATED, $roles, true)
       || !$profile
     ) {
       throw new BadRequestHttpException('file and Picture-Type are required and account must be activated');
@@ -68,17 +58,11 @@ final class CreateProfilePictureAction extends AbstractController {
       $picture->file = $uploadedFile;
       $picture->setPictureType($registeredPictureType);
       $picture->setProfile($profile);
+      $this->entityManager->persist($profile);
+      $this->entityManager->flush();
       return $picture;
     }
     throw new BadRequestHttpException('Max Number of Images already reached');
-    foreach ($pictures as $picture) {
-      $fs = new Filesystem();
-      if ($fs->exists(Picture::UPLOAD_DESTINATION . $picture->getFilePath())) {
-        $fs->remove(Picture::UPLOAD_DESTINATION . $picture->getFilePath());
-      }
-      $this->entityManager->remove($picture);
-    }
-    $this->entityManager->flush();
   }
 
   #[Route(path: 'image/{img}', name: 'image', methods: ['GET'])]

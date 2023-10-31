@@ -4,18 +4,19 @@ namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiProperty;
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Delete;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Post;
 use ApiPlatform\OpenApi\Model;
 use App\Controller\CreateProfilePictureAction;
+use App\Processor\Picture\DELETEPictureProcessor;
 use ArrayObject;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
-// TODO: Create Delete operation :)
 #[Vich\Uploadable]
 #[ORM\Entity]
 #[ApiResource(
@@ -23,6 +24,10 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
   operations: [
     new Get(),
     new GetCollection(),
+    new Delete(
+      security: "is_granted('ROLE_ADMIN') or is_granted('PICTURE_EDIT', object)",
+      processor: DELETEPictureProcessor::class
+    ),
     new Post(
       controller: CreateProfilePictureAction::class,
       openapi: new Model\Operation(
@@ -45,6 +50,7 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
           ])
         )
       ),
+      security: "is_granted('ROLE_ACTIVATED')",
       validationContext: ['groups' => ['Default', 'media_object_create']],
       deserialize: false,
     )
@@ -54,6 +60,7 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
 class Picture {
   public const UPLOAD_DESTINATION = '../media/uploaded/';
   #[ORM\Id, ORM\Column, ORM\GeneratedValue]
+  #[Groups(['read'])]
   private ?int $id = null;
 
   #[ApiProperty(types: ['https://schema.org/contentUrl'])]
