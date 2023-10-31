@@ -23,7 +23,7 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
   types: ['https://schema.org/MediaObject'],
   operations: [
     new Get(),
-    new GetCollection(),
+    new GetCollection(security: "is_granted('ROLE_ADMIN')"),
     new Delete(
       security: "is_granted('ROLE_ADMIN') or is_granted('PICTURE_EDIT', object)",
       processor: DELETEPictureProcessor::class
