@@ -71,6 +71,7 @@ class Profile {
   private ?Theme $theme = null;
 
   #[ORM\OneToMany(mappedBy: 'profile', targetEntity: Picture::class)]
+  #[Groups(['read'])]
   private Collection $picture;
 
   /**
