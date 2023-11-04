@@ -14,6 +14,11 @@ bin/build
 ```
 ## Useful Commands
 
+### Rebuild images
+```bash
+docker-compose up --build
+```
+
 ### Rests Database & create & run migrations (you will lose all data)
 ```bash
 bin/reset

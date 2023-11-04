@@ -1,4 +1,4 @@
-FROM node:11.13.0-alpine
+FROM node:21-alpine
 
 # Create app directory
 RUN mkdir -p /nuxtjs
