@@ -6,6 +6,7 @@ chmod +x bin/phpunit
 chmod +x bin/build
 chmod +x bin/symfony
 chmod +x bin/reset
+chmod +x bin/fe
 
 ```
 ### Boot-Up the project
@@ -42,6 +43,11 @@ bin/phpunit PATH_TO_UNIT
 ## Run Database Migration (optional)
 ```bash
 dc up flyway
+```
+
+### Run Command in Frontend Container
+```bash
+bin/fe "COMMAND"
 ```
 
 # API-Platform tricks (only in Symfony Container executable)

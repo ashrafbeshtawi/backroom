@@ -1,0 +1,13 @@
+#!/bin/bash
+
+# Check if there is exactly one argument
+if [ $# -ne 1 ]; then
+  echo "Usage: $0 <command>"
+  exit 1
+fi
+
+# Get the argument and store it in a variable
+command=$1
+
+# execute command
+docker exec nuxtjs $command
