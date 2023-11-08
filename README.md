@@ -58,7 +58,7 @@ bin/console make:factory
 
 ## Run Fixtures
 ```bash
-bin/console doctrine:fixtures:load
+bin/console doctrine:fixtures:load --append
 ```
 
 
