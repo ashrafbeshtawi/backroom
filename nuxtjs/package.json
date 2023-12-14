@@ -22,6 +22,7 @@
   },
   "dependencies": {
     "@mdi/font": "^7.3.67",
+    "animejs": "^3.2.2",
     "sass": "^1.69.5"
   }
 }

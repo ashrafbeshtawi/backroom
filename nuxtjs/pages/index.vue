@@ -20,17 +20,11 @@
 
     <!-- Main Content Section -->
     <v-main class="wrapper">
-
-      <v-container>
-        <v-row class="mt-5">
-          <v-col>
-            <v-card title="XFolio" text="lorem ipsum" variant="tonal"></v-card>
-          </v-col>
-          <v-col class="flex justify-space-around">
-            <img class="planet" src="planet1.png">
-          </v-col>
-        </v-row>
-      </v-container>
+      <v-row class="mt-5 h-screen">
+        <v-col class="flex justify-space-around align-center">
+          <div class="title text-5xl">XFolio</div>
+        </v-col>
+      </v-row>
     </v-main>
 
     <!-- Footer Section -->
@@ -48,11 +42,11 @@
 .wrapper {
   height: 95%;
   background-image: url('background.jpg');
-  background-repeat: repeat;
+  background-size: cover;
 }
 .planet {
   width: 400px;
-  animation: bounce 5s infinite;
+  animation: bounce 5s;
 }
 
 @keyframes bounce {
@@ -65,16 +59,56 @@
 }
 </style>
 <script>
+import anime from 'animejs/lib/anime.es.js';
+
 export default {
   data() {
     return {
       sidebarOpen: false,
     };
   },
+  mounted() {
+    this.triggerAnimation();
+  },
+
   methods: {
     toggleSidebar() {
       this.sidebarOpen = !this.sidebarOpen;
     },
+    triggerAnimation() {
+      const contents = [
+        {title: 'Hello there', description: 'Very cool app'},
+        {title: '12344555L', description: 'Very cool app'},
+      ];
+      const timeline = anime.timeline({ loop: true });
+      let j = 0;
+
+      timeline
+        .add({
+          targets: '.title',
+          opacity: 0,
+          duration: 2000,
+          easing: "easeOutExpo",
+          update: (anim) => {
+            if (anim.progress >= 100) {
+              j = (j + 1) % contents.length; // Adjusted the increment logic
+              const textWrapper = document.querySelector('.title');
+              textWrapper.innerHTML = contents[j].title; // Set the title content once
+              textWrapper.innerHTML = textWrapper.textContent.replace(/\S/g, "<span class='letter'>$&</span>");
+            }
+          }
+        })
+        .add({
+          targets: '.title .letter',
+          scale: [4, 1],
+          opacity: [0, 1],
+          translateZ: 0,
+          easing: "easeOutExpo",
+          duration: 2000,
+          delay: (el, i) => 70 * i
+        }, 1000);
+    }
+
   },
 };
 </script>
