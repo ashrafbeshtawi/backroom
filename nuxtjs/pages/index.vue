@@ -59,9 +59,6 @@
   }
 }
 
-.letter {
-  color: red;
-}
 </style>
 <script>
 import anime from 'animejs/lib/anime.es.js';
@@ -87,7 +84,6 @@ export default {
         {title: 'First Title', description: 'Very cool app'},
         {title: 'Second one', description: 'Very cool app'},
         {title: 'Third one', description: 'Very cool app'},
-
       ];
       const timeline = anime.timeline({ loop: true });
       let j = -1;
