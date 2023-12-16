@@ -1,14 +1,6 @@
 <template>
-  <v-navigation-drawer app v-model="sidebarOpen">
-    <v-list-item title="XFolio" subtitle="Portfolio on Steroids"></v-list-item>
-    <v-divider></v-divider>
-    <v-list-item title="Home"></v-list-item>
-    <v-list-item title="Demo"></v-list-item>
-    <v-list-item title="Why XFolio"></v-list-item>
-  </v-navigation-drawer>
   <!-- Header Section -->
   <v-app-bar app color="primary">
-    <v-app-bar-nav-icon @click="toggleSidebar"/>
     <v-toolbar-title>XFolio</v-toolbar-title>
     <v-spacer></v-spacer>
     <v-btn>Home</v-btn>
@@ -20,9 +12,12 @@
 
   <v-main class="wrapper">
     <v-row class="mt-5 h-screen">
-      <v-col class="flex justify-space-around align-center">
+      <v-col class="flex flex-col align-center justify-evenly">
         <div class="title text-5xl">
           {{ title }}
+        </div>
+        <div class="description text-2xl">
+          {{ description }}
         </div>
       </v-col>
     </v-row>
@@ -50,6 +45,9 @@
   width: 400px;
   animation: bounce 5s;
 }
+.description {
+  width: 400px;
+}
 
 @keyframes bounce {
   0%, 100% {
@@ -67,8 +65,8 @@ import anime from 'animejs/lib/anime.es.js';
 export default {
   data() {
     return {
-      sidebarOpen: false,
       title: '',
+      description: ''
     };
   },
   mounted() {
@@ -76,15 +74,35 @@ export default {
   },
 
   methods: {
-    toggleSidebar() {
-      this.sidebarOpen = !this.sidebarOpen;
-    },
     triggerAnimation() {
       const contents = [
-        {title: 'Hello there', description: 'Very cool app'},
-        {title: 'First Title', description: 'Very cool app'},
-        {title: 'Second one', description: 'Very cool app'},
-        {title: 'Third one', description: 'Very cool app'},
+        {
+          title: 'First Slide',
+          description: 'Lorem ipsum dolor sit amet, consectetur ' +
+            'adipiscing elit, sed do eiusmod tempor incididunt ut ' +
+            'labore et dolore magna aliqua. Sed arcu non odio euismod ' +
+            'lacinia at quis risus sed. At in tellus integer feugiat ' +
+            'scelerisque varius morbi. Sit amet dictum sit amet. Gravida ' +
+            'cum sociis natoque penatibus et magnis dis parturient. Congue '
+        },
+        {
+          title: 'Second Slide',
+          description: 'Lorem ipsum dolor sit amet, consectetur ' +
+            'adipiscing elit, sed do eiusmod tempor incididunt ut ' +
+            'labore et dolore magna aliqua. Sed arcu non odio euismod ' +
+            'lacinia at quis risus sed. At in tellus integer feugiat ' +
+            'scelerisque varius morbi. Sit amet dictum sit amet. Gravida ' +
+            'cum sociis natoque penatibus et magnis dis parturient. Congue '
+        },
+        {
+          title: 'Third Slide',
+          description: 'Lorem ipsum dolor sit amet, consectetur ' +
+            'adipiscing elit, sed do eiusmod tempor incididunt ut ' +
+            'labore et dolore magna aliqua. Sed arcu non odio euismod ' +
+            'lacinia at quis risus sed. At in tellus integer feugiat ' +
+            'scelerisque varius morbi. Sit amet dictum sit amet. Gravida ' +
+            'cum sociis natoque penatibus et magnis dis parturient. Congue '
+        },
       ];
       const timeline = anime.timeline({loop: true});
       let j = -1;
@@ -92,15 +110,17 @@ export default {
       timeline
         .add({
           targets: '.title',
-          scale: [4, 1],
+          scale: [0.1, 1],
           opacity: [0, 1],
+          translateY: '-100px',
           translateZ: 0,
           easing: "easeOutExpo",
-          duration: 2000,
+          duration: 4000,
           update: (anim) => {
             if (Math.round(anim.progress) === 5) {
               j = j + 1 >= contents.length ? 0 : j + 1;
               this.title = contents[j].title;
+              this.description = contents[j].description;
             }
           }
         })
