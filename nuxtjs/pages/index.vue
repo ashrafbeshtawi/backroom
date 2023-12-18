@@ -8,14 +8,16 @@
     <v-btn>Why XFolio</v-btn>
     <v-btn>Sign Up</v-btn>
     <v-btn>Login</v-btn>
+    <v-btn>{{ progress }}</v-btn>
   </v-app-bar>
 
   <v-main class="wrapper">
     <v-row class="mt-5 h-screen">
-      <v-col class="flex flex-col align-center justify-evenly">
+      <v-col class="animation_container flex flex-col align-center justify-center">
         <div class="title text-5xl">
           {{ title }}
         </div>
+        <div class="board"></div>
         <div class="description text-2xl">
           {{ description }}
         </div>
@@ -41,12 +43,24 @@
   background-size: cover;
 }
 
-.planet {
-  width: 400px;
-  animation: bounce 5s;
+.title {
+  opacity: 0;
 }
 .description {
   width: 400px;
+  z-index: 2;
+}
+.animation_container {
+  position: relative;
+}
+.board {
+  position: absolute;
+  background-color: #1f69c0;
+  z-index: 1;
+  width: 450px;
+  height: 350px;
+  border-radius: 50px;
+  bottom: 22%;
 }
 
 @keyframes bounce {
@@ -66,15 +80,24 @@ export default {
   data() {
     return {
       title: '',
-      description: ''
+      description: '',
+      progress: 0,
+      called: false,
     };
   },
   mounted() {
-    this.triggerAnimation();
+    this.triggerLoopAnimation();
   },
 
   methods: {
-    triggerAnimation() {
+    triggerOneTimeAnimation() {
+      const timeline = anime.timeline({loop: true});
+    },
+    triggerLoopAnimation() {
+      if (this.called) {
+        return;
+      }
+      this.called = true;
       const contents = [
         {
           title: 'First Slide',
@@ -105,6 +128,8 @@ export default {
         },
       ];
       const timeline = anime.timeline({loop: true});
+      this.title = contents[0].title;
+      this.description = contents[0].description;
       let j = -1;
 
       timeline
@@ -117,10 +142,12 @@ export default {
           easing: "easeOutExpo",
           duration: 4000,
           update: (anim) => {
+            this.progress = Math.round(anim.progress)
             if (Math.round(anim.progress) === 5) {
               j = j + 1 >= contents.length ? 0 : j + 1;
               this.title = contents[j].title;
               this.description = contents[j].description;
+              console.log(this.title)
             }
           }
         })
