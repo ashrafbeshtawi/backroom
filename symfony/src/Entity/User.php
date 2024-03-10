@@ -30,7 +30,10 @@ use Symfony\Component\Validator\Constraints as Assert;
     new GetCollection(security: "is_granted('ROLE_ADMIN')"),
     new GetCollection(
       uriTemplate: '/users/whoami/',
-      security: "is_granted('ROLE_USER')",
+      openapiContext: [
+        'summary' => 'returns the currently logged in user'
+      ],
+      security: "is_granted('IS_AUTHENTICATED_FULLY')",
       provider: CurrentUserProvider::class,
     ),
     new Get(security: "is_granted('ROLE_ADMIN') or (is_granted('ROLE_USER') and object.getId() == user.getId())"),
