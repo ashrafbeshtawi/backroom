@@ -71,7 +71,7 @@ use Symfony\Component\Validator\Constraints as Assert;
       processor: POSTUserProcessor::class
     ),
     new Put(
-      security: "is_granted('ROLE_ADMIN') or (is_granted('ROLE_USER') and object.getId() == user.getId())",
+      security: "is_granted('USER_EDIT', object)",
       processor: PUTUserProcessor::class
     ),
   ],

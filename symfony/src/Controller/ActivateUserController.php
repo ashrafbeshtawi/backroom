@@ -38,7 +38,7 @@ final class ActivateUserController extends AbstractController
       $this->entityManager->persist($user);
       $this->entityManager->flush();
     }
-    return new Response($res ? 'true' : 'false');
+    return new Response(status: $res ? 200 : 400);
 
   }
 
