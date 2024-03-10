@@ -27,7 +27,12 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 #[ApiResource(
   operations: [
-    new GetCollection(security: "is_granted('ROLE_ADMIN')"),
+    new GetCollection(
+      openapiContext: [
+        'summary' => 'returns all Users (Only for Admin)'
+      ],
+      security: "is_granted('ROLE_ADMIN')"
+    ),
     new GetCollection(
       uriTemplate: '/users/whoami/',
       openapiContext: [
@@ -36,7 +41,12 @@ use Symfony\Component\Validator\Constraints as Assert;
       security: "is_granted('IS_AUTHENTICATED_FULLY')",
       provider: CurrentUserProvider::class,
     ),
-    new Get(security: "is_granted('ROLE_ADMIN') or (is_granted('ROLE_USER') and object.getId() == user.getId())"),
+    new Get(
+      openapiContext: [
+        'summary' => 'returns a user given its Id'
+      ],
+      security: "is_granted('USER_VIEW', object)"
+    ),
     new Get(
       uriTemplate: '/activate/{id}/{secret}',
       requirements: [
