@@ -65,8 +65,8 @@ class Profile {
   #[Groups(['read', 'write'])]
   private string $description = '';
 
-  #[ORM\ManyToOne(inversedBy: 'profile')]
-  #[ORM\JoinColumn(nullable: false)]
+  #[ORM\ManyToOne(targetEntity: Theme::class)]
+  #[ORM\JoinColumn(name: 'theme_id', referencedColumnName: 'id', nullable: false)]
   #[Groups(['read', 'write'])]
   private ?Theme $theme = null;
 
