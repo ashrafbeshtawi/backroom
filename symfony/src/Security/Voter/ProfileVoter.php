@@ -7,7 +7,6 @@ use App\Entity\User;
 use App\Utils\Roles;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
-use Symfony\Component\Security\Core\User\UserInterface;
 
 class ProfileVoter extends Voter {
     public const EDIT = 'PROFILE_EDIT';
@@ -32,12 +31,17 @@ class ProfileVoter extends Voter {
       /** @var User $loggedInUser */
       $loggedInUser = $token->getUser();
 
+      // if user not found then bail out
+      if (!$userFromEntity) {
+        return false;
+      }
+
       // Read Profile is possible if owner is activated
       if ($attribute === self::VIEW) {
-        return $userFromEntity && $userFromEntity->hasRole(Roles::ACTIVATED);
+        return $userFromEntity->hasRole(Roles::ACTIVATED) || $loggedInUser?->hasRole(Roles::ADMIN);
       // Edit is possible if caller own the profile
       } else {
-        return $loggedInUser && $userFromEntity && $loggedInUser->getId() === $userFromEntity->getId();
+        return $loggedInUser?->getId() === $userFromEntity?->getId() || $loggedInUser?->hasRole(Roles::ADMIN);
       }
     }
 }

@@ -21,8 +21,8 @@ use Doctrine\ORM\Mapping as ORM;
 #[ApiResource(
   operations: [
     new GetCollection(security: "is_granted('ROLE_ADMIN')"),
-    new Get(security: "is_granted('ROLE_ADMIN') or is_granted('PROFILE_VIEW', object)"),
-    new Put(security: "is_granted('ROLE_ADMIN') or is_granted('PROFILE_EDIT', object)"),
+    new Get(security: "is_granted('PROFILE_VIEW', object)"),
+    new Put(security: "is_granted('PROFILE_EDIT', object)"),
   ],
   normalizationContext: ['groups' => ['read']],
   denormalizationContext: ['groups' => ['write']]
