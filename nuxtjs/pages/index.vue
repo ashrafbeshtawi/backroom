@@ -8,17 +8,17 @@
     <v-btn>Why XFolio</v-btn>
     <v-btn>Sign Up</v-btn>
     <v-btn>Login</v-btn>
-    <v-btn>{{ progress }}</v-btn>
+    <v-btn>{{progress}}</v-btn>
   </v-app-bar>
 
   <v-main class="wrapper">
     <v-row class="mt-5 h-screen">
       <v-col class="animation_container flex flex-col align-center justify-center">
-        <div class="title text-5xl">
+        <div id="title" class="text-5xl">
           {{ title }}
         </div>
         <div class="board"></div>
-        <div class="description text-2xl">
+        <div id="description" class="text-2xl">
           {{ description }}
         </div>
       </v-col>
@@ -43,10 +43,10 @@
   background-size: cover;
 }
 
-.title {
+#title {
   opacity: 0;
 }
-.description {
+#description {
   width: 400px;
   z-index: 2;
 }
@@ -56,7 +56,7 @@
 .board {
   position: absolute;
   background-color: #1f69c0;
-  z-index: 1;
+  z-index: 2;
   width: 450px;
   height: 350px;
   border-radius: 50px;
@@ -64,10 +64,10 @@
 }
 
 @keyframes bounce {
-  0%, 100% {
+  0% {
     transform: translateY(0);
   }
-  50% {
+  100% {
     transform: translateY(-20px);
   }
 }
@@ -79,84 +79,60 @@ import anime from 'animejs/lib/anime.es.js';
 export default {
   data() {
     return {
+      animationDuration: 3,
       title: '',
       description: '',
       progress: 0,
-      called: false,
-    };
-  },
-  mounted() {
-    this.triggerLoopAnimation();
-  },
-
-  methods: {
-    triggerOneTimeAnimation() {
-      const timeline = anime.timeline({loop: true});
-    },
-    triggerLoopAnimation() {
-      if (this.called) {
-        return;
-      }
-      this.called = true;
-      const contents = [
+      currentContent: 0,
+      contents: [
         {
           title: 'First Slide',
-          description: 'Lorem ipsum dolor sit amet, consectetur ' +
+          description: 'First Lorem ipsum dolor sit amet, consectetur ' +
             'adipiscing elit, sed do eiusmod tempor incididunt ut ' +
             'labore et dolore magna aliqua. Sed arcu non odio euismod ' +
             'lacinia at quis risus sed. At in tellus integer feugiat ' +
-            'scelerisque varius morbi. Sit amet dictum sit amet. Gravida ' +
-            'cum sociis natoque penatibus et magnis dis parturient. Congue '
+            'scelerisque varius morbi. Sit amet dictum sit amet. Gravida '
         },
         {
           title: 'Second Slide',
-          description: 'Lorem ipsum dolor sit amet, consectetur ' +
+          description: 'Second Lorem ipsum dolor sit amet, consectetur ' +
             'adipiscing elit, sed do eiusmod tempor incididunt ut ' +
             'labore et dolore magna aliqua. Sed arcu non odio euismod ' +
             'lacinia at quis risus sed. At in tellus integer feugiat ' +
-            'scelerisque varius morbi. Sit amet dictum sit amet. Gravida ' +
-            'cum sociis natoque penatibus et magnis dis parturient. Congue '
+            'scelerisque varius morbi. Sit amet dictum sit amet. Gravida '
         },
         {
           title: 'Third Slide',
-          description: 'Lorem ipsum dolor sit amet, consectetur ' +
+          description: 'Third Lorem ipsum dolor sit amet, consectetur ' +
             'adipiscing elit, sed do eiusmod tempor incididunt ut ' +
             'labore et dolore magna aliqua. Sed arcu non odio euismod ' +
             'lacinia at quis risus sed. At in tellus integer feugiat ' +
-            'scelerisque varius morbi. Sit amet dictum sit amet. Gravida ' +
-            'cum sociis natoque penatibus et magnis dis parturient. Congue '
+            'scelerisque varius morbi. Sit amet dictum sit amet. Gravida '
         },
-      ];
-      const timeline = anime.timeline({loop: true});
-      this.title = contents[0].title;
-      this.description = contents[0].description;
-      let j = -1;
+      ]
+    };
+  },
+  mounted() {
+    // call on each 1 of 100th of the animation duration
+    setInterval(this.animate, (this.animationDuration * 1000) / 100)
+  },
 
-      timeline
-        .add({
-          targets: '.title',
-          scale: [0.1, 1],
-          opacity: [0, 1],
-          translateY: '-100px',
-          translateZ: 0,
-          easing: "easeOutExpo",
-          duration: 4000,
-          update: (anim) => {
-            this.progress = Math.round(anim.progress)
-            if (Math.round(anim.progress) === 5) {
-              j = j + 1 >= contents.length ? 0 : j + 1;
-              this.title = contents[j].title;
-              this.description = contents[j].description;
-              console.log(this.title)
-            }
-          }
-        })
-        .add({
-          targets: '.title',
-          opacity: 0,
-          duration: 2000,
-          easing: "easeOutExpo",
-        })
+  methods: {
+    animate() {
+      this.title = this.contents[this.currentContent].title;
+      this.description = this.contents[this.currentContent].description;
+      const titleElement = document.getElementById('title');
+      const descriptionElement = document.getElementById('description');
+
+      if (this.progress >= 100) {
+        this.progress = 0;
+        this.currentContent = this.currentContent + 1 >= this.contents.length ? 0 : this.currentContent + 1;
+      } else {
+        this.progress = this.progress + 1;
+      }
+      titleElement.style.opacity = (this.progress / 100).toString();
+      descriptionElement.style.opacity = (this.progress / 100).toString();
+
     }
   },
 };
