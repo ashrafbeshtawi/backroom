@@ -25,7 +25,7 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
     new Get(),
     new GetCollection(security: "is_granted('ROLE_ADMIN')"),
     new Delete(
-      security: "is_granted('ROLE_ADMIN') or is_granted('PICTURE_EDIT', object)",
+      security: "is_granted('PICTURE_EDIT', object)",
       processor: DELETEPictureProcessor::class
     ),
     new Post(

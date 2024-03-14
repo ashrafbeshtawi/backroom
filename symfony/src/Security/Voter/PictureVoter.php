@@ -4,6 +4,7 @@ namespace App\Security\Voter;
 
 use App\Entity\Picture;
 use App\Entity\User;
+use App\Utils\Roles;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
@@ -26,6 +27,9 @@ class PictureVoter extends Voter {
     protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token): bool {
       /** @var User $loggedInUser */
       $loggedInUser = $token->getUser();
-      return $loggedInUser->getProfileId() === $subject->getProfileId();
+      if (!$loggedInUser) {
+        return false;
+      }
+      return $loggedInUser->getProfileId() === $subject->getProfileId() || $loggedInUser->hasRole(Roles::ADMIN);
     }
 }
