@@ -8,20 +8,23 @@
     <v-btn>Why XFolio</v-btn>
     <v-btn>Sign Up</v-btn>
     <v-btn>Login</v-btn>
-    <v-btn>{{progress}}</v-btn>
   </v-app-bar>
 
   <v-main class="wrapper">
     <v-row class="mt-5 h-screen">
-      <v-col class="animation_container flex flex-col align-center justify-center">
+      <v-col class="flex flex-col justify-center">
         <div id="title" class="text-5xl">
           {{ title }}
         </div>
-        <div class="board"></div>
         <div id="description" class="text-2xl">
           {{ description }}
         </div>
+        <div class="board"></div>
       </v-col>
+      <v-col class="flex flex-col justify-center">
+        <div class="image-slider"></div>
+      </v-col>
+
     </v-row>
   </v-main>
 
@@ -44,25 +47,28 @@
 }
 
 #title {
-  opacity: 0;
+  z-index: 2;
 }
 #description {
   width: 400px;
   z-index: 2;
 }
-.animation_container {
-  position: relative;
-}
+
 .board {
   position: absolute;
-  background-color: #1f69c0;
-  z-index: 2;
+  background-color: #5f769c;
+  z-index: 1;
   width: 450px;
   height: 350px;
   border-radius: 50px;
-  bottom: 22%;
 }
 
+.image-slider {
+  background-color: #5f769c;
+  width: 75%;
+  height: 75%;
+  border-radius: 50px;
+}
 @keyframes bounce {
   0% {
     transform: translateY(0);
